@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'teacher/teacher_management_screen.dart';
+import 'student/student_management_screen.dart';
+import 'batch/batch_management_screen.dart';
+import 'assignment/student_batch_screen.dart';
+import 'attendance/attendance_screen.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
@@ -34,14 +38,52 @@ class AdminDashboard extends StatelessWidget {
               context,
               title: "Students",
               icon: Icons.school,
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const StudentManagementScreen(),
+                  ),
+                );
+              },
             ),
 
             _dashboardCard(
               context,
               title: "Batches",
               icon: Icons.groups,
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const BatchManagementScreen(),
+                  ),
+                );
+              },
+            ),
+
+            _dashboardCard(
+              context,
+              title: "Student Batch",
+              icon: Icons.assignment_ind,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const StudentBatchScreen()),
+                );
+              },
+            ),
+
+            _dashboardCard(
+              context,
+              title: "Attendance",
+              icon: Icons.fact_check,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AttendanceScreen()),
+                );
+              },
             ),
 
             _dashboardCard(
