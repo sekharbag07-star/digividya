@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../admin/screens/admin_dashboard.dart';
 import '../../teacher/screens/teacher_dashboard.dart';
@@ -15,30 +17,84 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
 
-  void login() {
-    final email = emailController.text.trim().toLowerCase();
+  bool isLoading = false;
 
-    Widget screen;
+  Future<void> login() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
 
-    if (email == "admin@gmail.com") {
-      screen = const AdminDashboard();
-    } else if (email == "teacher@gmail.com") {
-      screen = const TeacherDashboard();
-    } else if (email == "student@gmail.com") {
-      screen = const StudentDashboard();
-    } else if (email == "parent@gmail.com") {
-      screen = const ParentDashboard();
-    } else {
+      final email = emailController.text.trim();
+
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: "123456");
+
+      String uid = userCredential.user!.uid;
+
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .get();
+
+      if (!userDoc.exists) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("User data not found")));
+        return;
+      }
+
+      String role = userDoc['role'];
+
+      Widget screen;
+
+      switch (role) {
+        case "admin":
+          screen = const AdminDashboard();
+          break;
+
+        case "teacher":
+          screen = const TeacherDashboard();
+          break;
+
+        case "student":
+          screen = const StudentDashboard();
+          break;
+
+        case "parent":
+          screen = const ParentDashboard();
+          break;
+
+        default:
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text("Invalid role")));
+          return;
+      }
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => screen),
+      );
+    } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Invalid User")));
-      return;
+      ).showSnackBar(SnackBar(content: Text(e.message ?? "Login failed")));
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
+  }
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => screen),
-    );
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
   }
 
   @override
@@ -47,19 +103,40 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(title: const Text("Coaching ERP")),
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const SizedBox(height: 50),
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                labelText: "Email",
-                border: OutlineInputBorder(),
-              ),
+        child: Center(
+          child: SizedBox(
+            width: 400,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.school, size: 80),
+                const SizedBox(height: 20),
+                const Text(
+                  "Coaching ERP Login",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 30),
+                TextField(
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                    labelText: "Email",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: isLoading ? null : login,
+                    child: isLoading
+                        ? const CircularProgressIndicator()
+                        : const Text("Login"),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(onPressed: login, child: const Text("Login")),
-          ],
+          ),
         ),
       ),
     );
