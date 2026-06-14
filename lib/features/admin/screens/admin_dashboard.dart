@@ -5,6 +5,7 @@ import 'student/student_management_screen.dart';
 import 'batch/batch_management_screen.dart';
 import 'assignment/student_batch_screen.dart';
 import 'attendance/attendance_screen.dart';
+import 'fees/fee_management_screen.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
@@ -90,7 +91,14 @@ class AdminDashboard extends StatelessWidget {
               context,
               title: "Fees",
               icon: Icons.currency_rupee,
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const FeeManagementScreen(),
+                  ),
+                );
+              },
             ),
           ],
         ),
