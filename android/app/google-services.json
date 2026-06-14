@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1034614519401",
+    "project_id": "coaching-erp-c6f7e",
+    "storage_bucket": "coaching-erp-c6f7e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1034614519401:android:cfe74ec1391878a74d14f8",
+        "android_client_info": {
+          "package_name": "com.example.coaching_erp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWuseGSiVuLX0f7oyOJNkapBvyijL23Bo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
