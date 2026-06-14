@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/services/teacher_service.dart';
+
 class TeacherManagementScreen extends StatefulWidget {
   const TeacherManagementScreen({super.key});
 
@@ -10,6 +12,8 @@ class TeacherManagementScreen extends StatefulWidget {
 }
 
 class _TeacherManagementScreenState extends State<TeacherManagementScreen> {
+  final TeacherService _teacherService = TeacherService();
+
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
@@ -31,14 +35,12 @@ class _TeacherManagementScreenState extends State<TeacherManagementScreen> {
       isLoading = true;
     });
 
-    await FirebaseFirestore.instance.collection('teachers').add({
-      'name': nameController.text.trim(),
-      'email': emailController.text.trim(),
-      'phone': phoneController.text.trim(),
-      'subject': subjectController.text.trim(),
-      'active': true,
-      'createdAt': Timestamp.now(),
-    });
+    await _teacherService.addTeacher(
+      name: nameController.text.trim(),
+      email: emailController.text.trim(),
+      phone: phoneController.text.trim(),
+      subject: subjectController.text.trim(),
+    );
 
     nameController.clear();
     emailController.clear();
@@ -54,6 +56,16 @@ class _TeacherManagementScreenState extends State<TeacherManagementScreen> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  Future<void> deleteTeacher(String teacherId) async {
+    await _teacherService.deleteTeacher(teacherId);
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Teacher Deleted")));
   }
 
   @override
@@ -101,7 +113,9 @@ class _TeacherManagementScreenState extends State<TeacherManagementScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: isLoading ? null : addTeacher,
-                child: const Text("Add Teacher"),
+                child: isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text("Add Teacher"),
               ),
             ),
 
@@ -109,10 +123,7 @@ class _TeacherManagementScreenState extends State<TeacherManagementScreen> {
 
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('teachers')
-                    .orderBy('createdAt', descending: true)
-                    .snapshots(),
+                stream: _teacherService.getTeachers(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
@@ -137,6 +148,12 @@ class _TeacherManagementScreenState extends State<TeacherManagementScreen> {
                           title: Text(teacher['name']),
                           subtitle: Text(
                             "${teacher['subject']} • ${teacher['email']}",
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () {
+                              deleteTeacher(teacher.id);
+                            },
                           ),
                         ),
                       );

@@ -37,6 +37,8 @@ class _LoginScreenState extends State<LoginScreen> {
           .doc(uid)
           .get();
 
+      if (!mounted) return;
+
       if (!userDoc.exists) {
         ScaffoldMessenger.of(
           context,
@@ -77,17 +79,23 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(builder: (_) => screen),
       );
     } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.message ?? "Login failed")));
     } catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
