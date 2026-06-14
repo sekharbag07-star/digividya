@@ -23,4 +23,8 @@ class BatchService {
         .orderBy('createdAt', descending: true)
         .snapshots();
   }
+
+  Future<void> deleteBatch(String docId) async {
+    await _firestore.collection('batches').doc(docId).delete();
+  }
 }
