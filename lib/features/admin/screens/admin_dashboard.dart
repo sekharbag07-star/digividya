@@ -23,6 +23,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
   int teachersCount = 0;
   int batchesCount = 0;
   int feesCount = 0;
+  double totalCollection = 0;
+  double pendingAmount = 0;
 
   @override
   void initState() {
@@ -36,6 +38,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
     final batches = await _dashboardService.getBatchesCount();
     final fees = await _dashboardService.getFeesCount();
 
+    final collection = await _dashboardService.getTotalCollection();
+    final pending = await _dashboardService.getPendingAmount();
+
     if (!mounted) return;
 
     setState(() {
@@ -43,6 +48,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
       teachersCount = teachers;
       batchesCount = batches;
       feesCount = fees;
+
+      totalCollection = collection;
+      pendingAmount = pending;
     });
   }
 
@@ -65,9 +73,24 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 mainAxisSpacing: 10,
                 children: [
                   _statCard("Students", studentsCount.toString(), Icons.school),
+
                   _statCard("Teachers", teachersCount.toString(), Icons.person),
+
                   _statCard("Batches", batchesCount.toString(), Icons.groups),
-                  _statCard("Fees", feesCount.toString(), Icons.currency_rupee),
+
+                  _statCard("Fees", feesCount.toString(), Icons.receipt),
+
+                  _statCard(
+                    "Collection",
+                    "₹${totalCollection.toStringAsFixed(0)}",
+                    Icons.account_balance_wallet,
+                  ),
+
+                  _statCard(
+                    "Pending",
+                    "₹${pendingAmount.toStringAsFixed(0)}",
+                    Icons.warning,
+                  ),
                 ],
               ),
 
