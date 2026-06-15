@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/services/student_service.dart';
 import '../../../../shared/widgets/delete_confirmation_dialog.dart';
+import 'student_profile_screen.dart';
 
 class StudentManagementScreen extends StatefulWidget {
   const StudentManagementScreen({super.key});
@@ -18,6 +19,11 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
+
+  final parentNameController = TextEditingController();
+  final parentPhoneController = TextEditingController();
+  final parentEmailController = TextEditingController();
+
   final batchController = TextEditingController();
 
   bool isLoading = false;
@@ -25,7 +31,9 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
   Future<void> addStudent() async {
     if (nameController.text.isEmpty ||
         emailController.text.isEmpty ||
-        batchController.text.isEmpty) {
+        batchController.text.isEmpty ||
+        parentNameController.text.isEmpty ||
+        parentPhoneController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text("Fill all required fields")));
@@ -40,12 +48,20 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
       name: nameController.text.trim(),
       email: emailController.text.trim(),
       phone: phoneController.text.trim(),
+      parentName: parentNameController.text.trim(),
+      parentPhone: parentPhoneController.text.trim(),
+      parentEmail: parentEmailController.text.trim(),
       batch: batchController.text.trim(),
     );
 
     nameController.clear();
     emailController.clear();
     phoneController.clear();
+
+    parentNameController.clear();
+    parentPhoneController.clear();
+    parentEmailController.clear();
+
     batchController.clear();
 
     if (!mounted) return;
@@ -78,7 +94,13 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
     nameController.dispose();
     emailController.dispose();
     phoneController.dispose();
+
+    parentNameController.dispose();
+    parentPhoneController.dispose();
+    parentEmailController.dispose();
+
     batchController.dispose();
+
     super.dispose();
   }
 
@@ -99,14 +121,36 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
 
             TextField(
               controller: emailController,
-              decoration: const InputDecoration(labelText: "Email"),
+              decoration: const InputDecoration(labelText: "Student Email"),
             ),
 
             const SizedBox(height: 10),
 
             TextField(
               controller: phoneController,
-              decoration: const InputDecoration(labelText: "Phone"),
+              decoration: const InputDecoration(labelText: "Student Phone"),
+            ),
+
+            const SizedBox(height: 10),
+
+            TextField(
+              controller: parentNameController,
+              decoration: const InputDecoration(labelText: "Parent Name"),
+            ),
+
+            const SizedBox(height: 10),
+
+            TextField(
+              controller: parentPhoneController,
+              decoration: const InputDecoration(labelText: "Parent Phone"),
+              keyboardType: TextInputType.phone,
+            ),
+
+            const SizedBox(height: 10),
+
+            TextField(
+              controller: parentEmailController,
+              decoration: const InputDecoration(labelText: "Parent Email"),
             ),
 
             const SizedBox(height: 10),
@@ -151,12 +195,21 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
 
                       return Card(
                         child: ListTile(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    StudentProfileScreen(studentId: student.id),
+                              ),
+                            );
+                          },
                           leading: const CircleAvatar(
                             child: Icon(Icons.school),
                           ),
                           title: Text(student['name']),
                           subtitle: Text(
-                            "${student['batch']} • ${student['email']}",
+                            "${student['batch']} • ${student['parentName']}",
                           ),
                           trailing: IconButton(
                             icon: const Icon(Icons.delete),
