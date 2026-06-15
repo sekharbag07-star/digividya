@@ -106,75 +106,116 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Student Management")),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Student Management"),
+          bottom: const TabBar(
+            tabs: [
+              Tab(icon: Icon(Icons.person_add), text: "Add Student"),
+              Tab(icon: Icon(Icons.school), text: "Student List"),
+            ],
+          ),
+        ),
+        body: TabBarView(
           children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: "Student Name"),
-            ),
+            // ADD STUDENT TAB
+            SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(
+                      labelText: "Student Name",
+                    ),
+                  ),
 
-            const SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(labelText: "Student Email"),
-            ),
+                  TextField(
+                    controller: emailController,
+                    decoration: const InputDecoration(
+                      labelText: "Student Email",
+                    ),
+                  ),
 
-            const SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
-            TextField(
-              controller: phoneController,
-              decoration: const InputDecoration(labelText: "Student Phone"),
-            ),
+                  TextField(
+                    controller: phoneController,
+                    decoration: const InputDecoration(
+                      labelText: "Student Phone",
+                    ),
+                    keyboardType: TextInputType.phone,
+                  ),
 
-            const SizedBox(height: 10),
+                  const SizedBox(height: 20),
 
-            TextField(
-              controller: parentNameController,
-              decoration: const InputDecoration(labelText: "Parent Name"),
-            ),
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Parent Details",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
 
-            const SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
-            TextField(
-              controller: parentPhoneController,
-              decoration: const InputDecoration(labelText: "Parent Phone"),
-              keyboardType: TextInputType.phone,
-            ),
+                  TextField(
+                    controller: parentNameController,
+                    decoration: const InputDecoration(labelText: "Parent Name"),
+                  ),
 
-            const SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
-            TextField(
-              controller: parentEmailController,
-              decoration: const InputDecoration(labelText: "Parent Email"),
-            ),
+                  TextField(
+                    controller: parentPhoneController,
+                    decoration: const InputDecoration(
+                      labelText: "Parent Phone",
+                    ),
+                    keyboardType: TextInputType.phone,
+                  ),
 
-            const SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
-            TextField(
-              controller: batchController,
-              decoration: const InputDecoration(labelText: "Batch"),
-            ),
+                  TextField(
+                    controller: parentEmailController,
+                    decoration: const InputDecoration(
+                      labelText: "Parent Email",
+                    ),
+                  ),
 
-            const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: isLoading ? null : addStudent,
-                child: isLoading
-                    ? const CircularProgressIndicator()
-                    : const Text("Add Student"),
+                  TextField(
+                    controller: batchController,
+                    decoration: const InputDecoration(labelText: "Batch"),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: isLoading ? null : addStudent,
+                      child: isLoading
+                          ? const CircularProgressIndicator()
+                          : const Text("Add Student"),
+                    ),
+                  ),
+                ],
               ),
             ),
 
-            const SizedBox(height: 20),
-
-            Expanded(
+            // STUDENT LIST TAB
+            Padding(
+              padding: const EdgeInsets.all(16),
               child: StreamBuilder<QuerySnapshot>(
                 stream: _studentService.getStudents(),
                 builder: (context, snapshot) {
