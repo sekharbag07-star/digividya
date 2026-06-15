@@ -8,10 +8,24 @@ class BatchService {
     required String subject,
     required String teacher,
   }) async {
+    final existing = await _firestore
+        .collection('batches')
+        .where('name', isEqualTo: name.trim())
+        .limit(1)
+        .get();
+
+    if (existing.docs.isNotEmpty) {
+      throw Exception("Batch already exists");
+    }
+
     await _firestore.collection('batches').add({
-      'name': name,
-      'subject': subject,
-      'teacher': teacher,
+      'name': name.trim(),
+      'subject': subject.trim(),
+      'teacher': teacher.trim(),
+
+      // Student assignment support
+      'studentCount': 0,
+
       'active': true,
       'createdAt': Timestamp.now(),
     });
@@ -25,6 +39,23 @@ class BatchService {
   }
 
   Future<void> deleteBatch(String docId) async {
-    await _firestore.collection('batches').doc(docId).delete();
+    // Remove batch from assigned students first
+    final students = await _firestore
+        .collection('students')
+        .where('batchId', isEqualTo: docId)
+        .get();
+
+    final batch = _firestore.batch();
+
+    for (final student in students.docs) {
+      batch.update(student.reference, {
+        'batchId': '',
+        'batchName': 'Not Assigned',
+      });
+    }
+
+    batch.delete(_firestore.collection('batches').doc(docId));
+
+    await batch.commit();
   }
 }

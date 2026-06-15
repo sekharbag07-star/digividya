@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class StudentProfileScreen extends StatelessWidget {
   final String studentId;
@@ -18,6 +18,10 @@ class StudentProfileScreen extends StatelessWidget {
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.data!.exists) {
+            return const Center(child: Text("Student not found"));
           }
 
           final student = snapshot.data!.data() as Map<String, dynamic>;
@@ -41,7 +45,12 @@ class StudentProfileScreen extends StatelessWidget {
                   ),
                 ),
 
-                Text(student['email'] ?? ''),
+                const SizedBox(height: 4),
+
+                Text(
+                  student['email'] ?? '',
+                  style: const TextStyle(color: Colors.grey),
+                ),
 
                 const SizedBox(height: 20),
 
@@ -49,7 +58,7 @@ class StudentProfileScreen extends StatelessWidget {
                   child: ListTile(
                     leading: const Icon(Icons.phone),
                     title: const Text("Student Phone"),
-                    subtitle: Text(student['phone'] ?? ''),
+                    subtitle: Text(student['phone'] ?? 'N/A'),
                   ),
                 ),
 
@@ -57,7 +66,7 @@ class StudentProfileScreen extends StatelessWidget {
                   child: ListTile(
                     leading: const Icon(Icons.family_restroom),
                     title: const Text("Parent Name"),
-                    subtitle: Text(student['parentName'] ?? ''),
+                    subtitle: Text(student['parentName'] ?? 'N/A'),
                   ),
                 ),
 
@@ -65,7 +74,7 @@ class StudentProfileScreen extends StatelessWidget {
                   child: ListTile(
                     leading: const Icon(Icons.call),
                     title: const Text("Parent Phone"),
-                    subtitle: Text(student['parentPhone'] ?? ''),
+                    subtitle: Text(student['parentPhone'] ?? 'N/A'),
                   ),
                 ),
 
@@ -73,7 +82,7 @@ class StudentProfileScreen extends StatelessWidget {
                   child: ListTile(
                     leading: const Icon(Icons.email),
                     title: const Text("Parent Email"),
-                    subtitle: Text(student['parentEmail'] ?? ''),
+                    subtitle: Text(student['parentEmail'] ?? 'N/A'),
                   ),
                 ),
 
@@ -81,21 +90,24 @@ class StudentProfileScreen extends StatelessWidget {
                   child: ListTile(
                     leading: const Icon(Icons.groups),
                     title: const Text("Batch"),
-                    subtitle: Text(student['batch'] ?? ''),
+                    subtitle: Text(student['batchName'] ?? 'Not Assigned'),
                   ),
                 ),
 
                 const SizedBox(height: 20),
 
                 const Text(
-                  "Attendance",
+                  "Attendance Summary",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
 
+                const SizedBox(height: 10),
+
                 Card(
                   child: ListTile(
-                    title: Text("Present: ${student['presentCount'] ?? 0}"),
-                    subtitle: Text("Absent: ${student['absentCount'] ?? 0}"),
+                    leading: const Icon(Icons.fact_check),
+                    title: Text("Present : ${student['presentCount'] ?? 0}"),
+                    subtitle: Text("Absent : ${student['absentCount'] ?? 0}"),
                   ),
                 ),
 
@@ -106,37 +118,116 @@ class StudentProfileScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
 
+                const SizedBox(height: 10),
+
                 Card(
                   child: ListTile(
-                    title: Text("Paid: ₹${student['totalPaid'] ?? 0}"),
-                    subtitle: Text("Pending: ₹${student['pendingFees'] ?? 0}"),
+                    leading: const Icon(Icons.currency_rupee),
+                    title: Text("Paid : ₹${student['totalPaid'] ?? 0}"),
+                    subtitle: Text("Pending : ₹${student['pendingFees'] ?? 0}"),
                   ),
                 ),
 
                 const SizedBox(height: 20),
 
                 const Text(
-                  "Rankings",
+                  "Ranking & Performance",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
+
+                const SizedBox(height: 10),
 
                 Card(
                   child: Column(
                     children: [
                       ListTile(
+                        leading: const Icon(Icons.emoji_events),
                         title: const Text("Recent Rank"),
                         trailing: Text("#${student['recentRank'] ?? 0}"),
                       ),
+
+                      const Divider(height: 1),
+
                       ListTile(
+                        leading: const Icon(Icons.workspace_premium),
                         title: const Text("Overall Rank"),
                         trailing: Text("#${student['overallRank'] ?? 0}"),
                       ),
+
+                      const Divider(height: 1),
+
                       ListTile(
+                        leading: const Icon(Icons.groups),
                         title: const Text("Batch Rank"),
                         trailing: Text("#${student['batchRank'] ?? 0}"),
                       ),
+
+                      const Divider(height: 1),
+
+                      ListTile(
+                        leading: const Icon(Icons.analytics),
+                        title: const Text("Average Score"),
+                        trailing: Text(
+                          "${((student['averageScore'] ?? 0) as num).toStringAsFixed(2)}%",
+                        ),
+                      ),
                     ],
                   ),
+                ),
+
+                const SizedBox(height: 20),
+
+                const Text(
+                  "Recent Results",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+
+                const SizedBox(height: 10),
+
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('results')
+                      .where('studentId', isEqualTo: studentId)
+                      .orderBy('createdAt', descending: true)
+                      .limit(5)
+                      .snapshots(),
+                  builder: (context, resultSnapshot) {
+                    if (!resultSnapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    final results = resultSnapshot.data!.docs;
+
+                    if (results.isEmpty) {
+                      return const Card(
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Text("No Results Available"),
+                        ),
+                      );
+                    }
+
+                    return Column(
+                      children: results.map((doc) {
+                        final result = doc.data() as Map<String, dynamic>;
+
+                        return Card(
+                          child: ListTile(
+                            leading: Icon(
+                              result['status'] == 'Pass'
+                                  ? Icons.check_circle
+                                  : Icons.cancel,
+                            ),
+                            title: Text(result['examName'] ?? ''),
+                            subtitle: Text(
+                              "Total: ${result['total'] ?? 0} | Percentage: ${((result['percentage'] ?? 0) as num).toStringAsFixed(2)}%",
+                            ),
+                            trailing: Text(result['status'] ?? ''),
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
                 ),
               ],
             ),

@@ -25,6 +25,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   int teachersCount = 0;
   int batchesCount = 0;
   int feesCount = 0;
+
   double totalCollection = 0;
   double pendingAmount = 0;
 
@@ -67,6 +68,35 @@ class _AdminDashboardState extends State<AdminDashboard> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Welcome Admin",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 6),
+                    Text(
+                      "Manage your coaching institute efficiently",
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
               GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -80,7 +110,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
                   _statCard("Batches", batchesCount.toString(), Icons.groups),
 
-                  _statCard("Fees", feesCount.toString(), Icons.receipt),
+                  _statCard("Fees", feesCount.toString(), Icons.receipt_long),
 
                   _statCard(
                     "Collection",
@@ -91,12 +121,22 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   _statCard(
                     "Pending",
                     "₹${pendingAmount.toStringAsFixed(0)}",
-                    Icons.warning,
+                    Icons.warning_amber_rounded,
                   ),
                 ],
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 25),
+
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Quick Actions",
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+              ),
+
+              const SizedBox(height: 12),
 
               GridView.count(
                 shrinkWrap: true,
@@ -227,18 +267,27 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   Widget _statCard(String title, String value, IconData icon) {
     return Card(
-      elevation: 4,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 40),
-          const SizedBox(height: 10),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-          ),
-          Text(title, style: const TextStyle(fontSize: 16)),
-        ],
+      elevation: 5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(radius: 24, child: Icon(icon, size: 24)),
+
+            const SizedBox(height: 8),
+
+            Flexible(
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -250,17 +299,20 @@ class _AdminDashboardState extends State<AdminDashboard> {
     required VoidCallback onTap,
   }) {
     return InkWell(
+      borderRadius: BorderRadius.circular(20),
       onTap: onTap,
       child: Card(
-        elevation: 4,
+        elevation: 5,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 50),
-            const SizedBox(height: 10),
+            CircleAvatar(radius: 28, child: Icon(icon, size: 28)),
+            const SizedBox(height: 12),
             Text(
               title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
         ),

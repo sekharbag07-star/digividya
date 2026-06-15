@@ -7,42 +7,57 @@ class StudentService {
     required String name,
     required String email,
     required String phone,
-
     required String parentName,
     required String parentPhone,
     required String parentEmail,
-
-    required String batch,
   }) async {
+    final existing = await _firestore
+        .collection('students')
+        .where('email', isEqualTo: email)
+        .limit(1)
+        .get();
+
+    if (existing.docs.isNotEmpty) {
+      throw Exception('Student already exists with this email');
+    }
+
     await _firestore.collection('students').add({
+      // Student
       'name': name,
       'email': email,
       'phone': phone,
 
+      // Parent
       'parentName': parentName,
       'parentPhone': parentPhone,
       'parentEmail': parentEmail,
 
-      'batch': batch,
+      // Batch
+      'batchId': '',
+      'batchName': 'Not Assigned',
 
-      // Future use
+      // Profile
       'photoUrl': '',
 
       // Ranking
       'recentRank': 0,
       'overallRank': 0,
       'batchRank': 0,
+      'averageScore': 0,
 
-      // Stats
+      // Attendance
       'presentCount': 0,
       'absentCount': 0,
 
-      // Fee Summary
-      'totalPaid': 0,
-      'pendingFees': 0,
+      // Fees
+      'totalPaid': 0.0,
+      'pendingFees': 0.0,
 
+      // Status
       'active': true,
+
       'createdAt': Timestamp.now(),
+      'updatedAt': Timestamp.now(),
     });
   }
 
@@ -62,23 +77,30 @@ class StudentService {
     required String name,
     required String email,
     required String phone,
-
     required String parentName,
     required String parentPhone,
     required String parentEmail,
-
-    required String batch,
   }) async {
     await _firestore.collection('students').doc(studentId).update({
       'name': name,
       'email': email,
       'phone': phone,
-
       'parentName': parentName,
       'parentPhone': parentPhone,
       'parentEmail': parentEmail,
+      'updatedAt': Timestamp.now(),
+    });
+  }
 
-      'batch': batch,
+  Future<void> assignBatch({
+    required String studentId,
+    required String batchId,
+    required String batchName,
+  }) async {
+    await _firestore.collection('students').doc(studentId).update({
+      'batchId': batchId,
+      'batchName': batchName,
+      'updatedAt': Timestamp.now(),
     });
   }
 

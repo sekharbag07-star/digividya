@@ -24,14 +24,11 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
   final parentPhoneController = TextEditingController();
   final parentEmailController = TextEditingController();
 
-  final batchController = TextEditingController();
-
   bool isLoading = false;
 
   Future<void> addStudent() async {
     if (nameController.text.isEmpty ||
         emailController.text.isEmpty ||
-        batchController.text.isEmpty ||
         parentNameController.text.isEmpty ||
         parentPhoneController.text.isEmpty) {
       ScaffoldMessenger.of(
@@ -44,31 +41,38 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
       isLoading = true;
     });
 
-    await _studentService.addStudent(
-      name: nameController.text.trim(),
-      email: emailController.text.trim(),
-      phone: phoneController.text.trim(),
-      parentName: parentNameController.text.trim(),
-      parentPhone: parentPhoneController.text.trim(),
-      parentEmail: parentEmailController.text.trim(),
-      batch: batchController.text.trim(),
-    );
+    try {
+      await _studentService.addStudent(
+        name: nameController.text.trim(),
+        email: emailController.text.trim(),
+        phone: phoneController.text.trim(),
+        parentName: parentNameController.text.trim(),
+        parentPhone: parentPhoneController.text.trim(),
+        parentEmail: parentEmailController.text.trim(),
+      );
 
-    nameController.clear();
-    emailController.clear();
-    phoneController.clear();
+      nameController.clear();
+      emailController.clear();
+      phoneController.clear();
 
-    parentNameController.clear();
-    parentPhoneController.clear();
-    parentEmailController.clear();
+      parentNameController.clear();
+      parentPhoneController.clear();
+      parentEmailController.clear();
 
-    batchController.clear();
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Student Added Successfully")),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
 
     if (!mounted) return;
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("Student Added Successfully")));
 
     setState(() {
       isLoading = false;
@@ -99,8 +103,6 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
     parentPhoneController.dispose();
     parentEmailController.dispose();
 
-    batchController.dispose();
-
     super.dispose();
   }
 
@@ -120,7 +122,6 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
         ),
         body: TabBarView(
           children: [
-            // ADD STUDENT TAB
             SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -145,10 +146,10 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
 
                   TextField(
                     controller: phoneController,
+                    keyboardType: TextInputType.phone,
                     decoration: const InputDecoration(
                       labelText: "Student Phone",
                     ),
-                    keyboardType: TextInputType.phone,
                   ),
 
                   const SizedBox(height: 20),
@@ -175,10 +176,10 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
 
                   TextField(
                     controller: parentPhoneController,
+                    keyboardType: TextInputType.phone,
                     decoration: const InputDecoration(
                       labelText: "Parent Phone",
                     ),
-                    keyboardType: TextInputType.phone,
                   ),
 
                   const SizedBox(height: 10),
@@ -188,13 +189,6 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                     decoration: const InputDecoration(
                       labelText: "Parent Email",
                     ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  TextField(
-                    controller: batchController,
-                    decoration: const InputDecoration(labelText: "Batch"),
                   ),
 
                   const SizedBox(height: 25),
@@ -213,7 +207,6 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
               ),
             ),
 
-            // STUDENT LIST TAB
             Padding(
               padding: const EdgeInsets.all(16),
               child: StreamBuilder<QuerySnapshot>(
@@ -250,7 +243,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                           ),
                           title: Text(student['name']),
                           subtitle: Text(
-                            "${student['batch']} • ${student['parentName']}",
+                            "${student['batchName'] ?? 'Not Assigned'} • ${student['parentName']}",
                           ),
                           trailing: IconButton(
                             icon: const Icon(Icons.delete),

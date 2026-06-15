@@ -14,6 +14,9 @@ class _ResultEntryScreenState extends State<ResultEntryScreen> {
   String? selectedStudentId;
   String? selectedStudentName;
 
+  String? selectedBatchId;
+  String? selectedBatchName;
+
   String? selectedExamId;
   String? selectedExamName;
 
@@ -28,50 +31,97 @@ class _ResultEntryScreenState extends State<ResultEntryScreen> {
   Future<void> saveResult() async {
     if (selectedStudentId == null ||
         selectedExamId == null ||
-        mathController.text.isEmpty ||
-        scienceController.text.isEmpty ||
-        englishController.text.isEmpty) {
+        mathController.text.trim().isEmpty ||
+        scienceController.text.trim().isEmpty ||
+        englishController.text.trim().isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text("Fill all fields")));
       return;
     }
 
-    final math = int.parse(mathController.text);
-    final science = int.parse(scienceController.text);
-    final english = int.parse(englishController.text);
+    try {
+      setState(() {
+        isLoading = true;
+      });
 
-    final total = math + science + english;
+      final math = int.tryParse(mathController.text.trim()) ?? 0;
+      final science = int.tryParse(scienceController.text.trim()) ?? 0;
+      final english = int.tryParse(englishController.text.trim()) ?? 0;
 
-    setState(() {
-      isLoading = true;
-    });
+      final total = math + science + english;
 
-    await FirebaseFirestore.instance.collection('results').add({
-      'studentId': selectedStudentId,
-      'studentName': selectedStudentName,
+      final percentage = total / 3;
 
-      'examId': selectedExamId,
-      'examName': selectedExamName,
+      final resultStatus = percentage >= 35 ? "Pass" : "Fail";
 
-      'math': math,
-      'science': science,
-      'english': english,
+      final existingResult = await FirebaseFirestore.instance
+          .collection('results')
+          .where('studentId', isEqualTo: selectedStudentId)
+          .where('examId', isEqualTo: selectedExamId)
+          .limit(1)
+          .get();
 
-      'total': total,
+      if (existingResult.docs.isNotEmpty) {
+        if (!mounted) return;
 
-      'createdAt': Timestamp.now(),
-    });
-    await _rankingService.updateAllRanks();
-    mathController.clear();
-    scienceController.clear();
-    englishController.clear();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Result already entered for this student in this exam",
+            ),
+          ),
+        );
+
+        setState(() {
+          isLoading = false;
+        });
+
+        return;
+      }
+
+      await FirebaseFirestore.instance.collection('results').add({
+        'studentId': selectedStudentId,
+        'studentName': selectedStudentName,
+
+        'batchId': selectedBatchId,
+        'batchName': selectedBatchName,
+
+        'examId': selectedExamId,
+        'examName': selectedExamName,
+
+        'math': math,
+        'science': science,
+        'english': english,
+
+        'total': total,
+        'percentage': percentage,
+
+        'status': resultStatus,
+
+        'createdAt': Timestamp.now(),
+      });
+
+      await _rankingService.updateAllRanks();
+
+      mathController.clear();
+      scienceController.clear();
+      englishController.clear();
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Result Saved Successfully")),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+    }
 
     if (!mounted) return;
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("Result Saved")));
 
     setState(() {
       isLoading = false;
@@ -90,7 +140,7 @@ class _ResultEntryScreenState extends State<ResultEntryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Result Entry")),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
@@ -104,6 +154,7 @@ class _ResultEntryScreenState extends State<ResultEntryScreen> {
                 }
 
                 return DropdownButtonFormField<String>(
+                  initialValue: selectedStudentId,
                   decoration: const InputDecoration(
                     labelText: "Select Student",
                   ),
@@ -121,6 +172,14 @@ class _ResultEntryScreenState extends State<ResultEntryScreen> {
                     setState(() {
                       selectedStudentId = value;
                       selectedStudentName = doc['name'];
+
+                      selectedBatchId = doc.data() is Map<String, dynamic>
+                          ? (doc['batchId'] ?? '')
+                          : '';
+
+                      selectedBatchName = doc.data() is Map<String, dynamic>
+                          ? (doc['batchName'] ?? doc['batch'] ?? '')
+                          : '';
                     });
                   },
                 );
@@ -139,6 +198,7 @@ class _ResultEntryScreenState extends State<ResultEntryScreen> {
                 }
 
                 return DropdownButtonFormField<String>(
+                  initialValue: selectedExamId,
                   decoration: const InputDecoration(labelText: "Select Exam"),
                   items: snapshot.data!.docs.map((exam) {
                     return DropdownMenuItem<String>(
@@ -184,10 +244,11 @@ class _ResultEntryScreenState extends State<ResultEntryScreen> {
               decoration: const InputDecoration(labelText: "English Marks"),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
 
             SizedBox(
               width: double.infinity,
+              height: 50,
               child: ElevatedButton(
                 onPressed: isLoading ? null : saveResult,
                 child: isLoading

@@ -9,14 +9,19 @@ class FeeManagementScreen extends StatefulWidget {
 }
 
 class _FeeManagementScreenState extends State<FeeManagementScreen> {
-  String? selectedStudent;
+  String? selectedStudentId;
+  String? selectedStudentName;
+
   String status = "Paid";
 
   final amountController = TextEditingController();
   final monthController = TextEditingController();
 
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
   Future<void> saveFee() async {
-    if (selectedStudent == null ||
+    if (selectedStudentId == null ||
+        selectedStudentName == null ||
         amountController.text.isEmpty ||
         monthController.text.isEmpty) {
       ScaffoldMessenger.of(
@@ -25,13 +30,24 @@ class _FeeManagementScreenState extends State<FeeManagementScreen> {
       return;
     }
 
-    await FirebaseFirestore.instance.collection('fees').add({
-      'studentName': selectedStudent,
-      'amount': double.parse(amountController.text),
+    final amount = double.tryParse(amountController.text) ?? 0;
+
+    await firestore.collection('fees').add({
+      'studentId': selectedStudentId,
+      'studentName': selectedStudentName,
+      'amount': amount,
       'month': monthController.text.trim(),
       'status': status,
       'createdAt': Timestamp.now(),
     });
+
+    final studentRef = firestore.collection('students').doc(selectedStudentId);
+
+    if (status == 'Paid') {
+      await studentRef.update({'totalPaid': FieldValue.increment(amount)});
+    } else {
+      await studentRef.update({'pendingFees': FieldValue.increment(amount)});
+    }
 
     amountController.clear();
     monthController.clear();
@@ -59,26 +75,31 @@ class _FeeManagementScreenState extends State<FeeManagementScreen> {
         child: Column(
           children: [
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('students')
-                  .snapshots(),
+              stream: firestore.collection('students').snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const CircularProgressIndicator();
                 }
 
                 return DropdownButtonFormField<String>(
-                  initialValue: selectedStudent,
+                  initialValue: selectedStudentId,
                   decoration: const InputDecoration(labelText: "Student"),
                   items: snapshot.data!.docs.map((student) {
+                    final data = student.data() as Map<String, dynamic>;
+
                     return DropdownMenuItem<String>(
-                      value: student['name'],
-                      child: Text(student['name']),
+                      value: student.id,
+                      child: Text(data['name'] ?? ''),
                     );
                   }).toList(),
                   onChanged: (value) {
+                    final doc = snapshot.data!.docs.firstWhere(
+                      (e) => e.id == value,
+                    );
+
                     setState(() {
-                      selectedStudent = value;
+                      selectedStudentId = value;
+                      selectedStudentName = doc['name'];
                     });
                   },
                 );
@@ -130,7 +151,7 @@ class _FeeManagementScreenState extends State<FeeManagementScreen> {
 
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
+                stream: firestore
                     .collection('fees')
                     .orderBy('createdAt', descending: true)
                     .snapshots(),
@@ -141,16 +162,20 @@ class _FeeManagementScreenState extends State<FeeManagementScreen> {
 
                   final fees = snapshot.data!.docs;
 
+                  if (fees.isEmpty) {
+                    return const Center(child: Text("No Fee Records"));
+                  }
+
                   return ListView.builder(
                     itemCount: fees.length,
                     itemBuilder: (context, index) {
-                      final fee = fees[index];
+                      final fee = fees[index].data() as Map<String, dynamic>;
 
                       return Card(
                         child: ListTile(
-                          title: Text(fee['studentName']),
-                          subtitle: Text("${fee['month']} • ₹${fee['amount']}"),
-                          trailing: Text(fee['status']),
+                          title: Text(fee['studentName'] ?? ''),
+                          subtitle: Text('${fee['month']} • ₹${fee['amount']}'),
+                          trailing: Text(fee['status'] ?? ''),
                         ),
                       );
                     },
