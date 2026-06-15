@@ -8,6 +8,8 @@ import 'batch/batch_management_screen.dart';
 import 'assignment/student_batch_screen.dart';
 import 'attendance/attendance_screen.dart';
 import 'fees/fee_management_screen.dart';
+import 'exams/exam_management_screen.dart';
+import 'results/result_entry_screen.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -182,6 +184,34 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         context,
                         MaterialPageRoute(
                           builder: (_) => const FeeManagementScreen(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  _dashboardCard(
+                    context,
+                    title: "Exams",
+                    icon: Icons.quiz,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ExamManagementScreen(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  _dashboardCard(
+                    context,
+                    title: "Results",
+                    icon: Icons.leaderboard,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ResultEntryScreen(),
                         ),
                       );
                     },

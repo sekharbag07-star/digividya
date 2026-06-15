@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'firebase_options.dart';
+import 'core/theme/app_theme.dart';
 import 'features/auth/screens/splash_screen.dart';
 
 Future<void> main() async {
@@ -20,6 +21,9 @@ class CoachingERP extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Coaching ERP',
+
+      theme: AppTheme.lightTheme,
+
       home: const SplashScreen(),
     );
   }
