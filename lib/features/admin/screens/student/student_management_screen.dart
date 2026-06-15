@@ -122,6 +122,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
         ),
         body: TabBarView(
           children: [
+            // ADD STUDENT TAB
             SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -207,6 +208,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
               ),
             ),
 
+            // STUDENT LIST TAB
             Padding(
               padding: const EdgeInsets.all(16),
               child: StreamBuilder<QuerySnapshot>(
@@ -227,7 +229,20 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                     itemBuilder: (context, index) {
                       final student = students[index];
 
+                      final data =
+                          student.data() as Map<String, dynamic>? ?? {};
+
+                      final name =
+                          data['name']?.toString() ?? 'Unknown Student';
+
+                      final parentName =
+                          data['parentName']?.toString() ?? 'No Parent';
+
+                      final batchName =
+                          data['batchName']?.toString() ?? 'Not Assigned';
+
                       return Card(
+                        margin: const EdgeInsets.only(bottom: 10),
                         child: ListTile(
                           onTap: () {
                             Navigator.push(
@@ -241,10 +256,8 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                           leading: const CircleAvatar(
                             child: Icon(Icons.school),
                           ),
-                          title: Text(student['name']),
-                          subtitle: Text(
-                            "${student['batchName'] ?? 'Not Assigned'} • ${student['parentName']}",
-                          ),
+                          title: Text(name),
+                          subtitle: Text("$batchName • $parentName"),
                           trailing: IconButton(
                             icon: const Icon(Icons.delete),
                             onPressed: () {

@@ -6,6 +6,7 @@ import '../../admin/screens/admin_dashboard.dart';
 import '../../teacher/screens/teacher_dashboard.dart';
 import '../../student/screens/student_dashboard.dart';
 import '../../parent/screens/parent_dashboard.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +17,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   bool isLoading = false;
 
@@ -26,9 +28,10 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       final email = emailController.text.trim();
+      final password = passwordController.text.trim();
 
       UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: "123456");
+          .signInWithEmailAndPassword(email: email, password: password);
 
       String uid = userCredential.user!.uid;
 
@@ -102,6 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     emailController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -118,12 +122,16 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(Icons.school, size: 80),
+
                 const SizedBox(height: 20),
+
                 const Text(
                   "Coaching ERP Login",
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
+
                 const SizedBox(height: 30),
+
                 TextField(
                   controller: emailController,
                   decoration: const InputDecoration(
@@ -131,7 +139,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     border: OutlineInputBorder(),
                   ),
                 ),
+
+                const SizedBox(height: 15),
+
+                TextField(
+                  controller: passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: "Password",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+
                 const SizedBox(height: 20),
+
                 SizedBox(
                   width: double.infinity,
                   height: 50,
@@ -141,6 +162,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         ? const CircularProgressIndicator()
                         : const Text("Login"),
                   ),
+                ),
+
+                const SizedBox(height: 10),
+
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                    );
+                  },
+                  child: const Text("New Student? Register"),
                 ),
               ],
             ),

@@ -127,29 +127,42 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       Text('Present: $presentCount | Absent: $absentCount'),
                     ],
                   ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                  trailing: SizedBox(
+                    width: 110,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              padding: EdgeInsets.zero,
+                            ),
+                            onPressed: () {
+                              markAttendance(
+                                student.id,
+                                name,
+                                batch,
+                                'Present',
+                              );
+                            },
+                            child: const Text('P'),
+                          ),
                         ),
-                        onPressed: () {
-                          markAttendance(student.id, name, batch, 'Present');
-                        },
-                        child: const Text('P'),
-                      ),
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              padding: EdgeInsets.zero,
+                            ),
+                            onPressed: () {
+                              markAttendance(student.id, name, batch, 'Absent');
+                            },
+                            child: const Text('A'),
+                          ),
                         ),
-                        onPressed: () {
-                          markAttendance(student.id, name, batch, 'Absent');
-                        },
-                        child: const Text('A'),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );

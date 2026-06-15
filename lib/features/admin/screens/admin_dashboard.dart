@@ -10,6 +10,7 @@ import 'attendance/attendance_screen.dart';
 import 'fees/fee_management_screen.dart';
 import 'exams/exam_management_screen.dart';
 import 'results/result_entry_screen.dart';
+import 'payment_approval_screen.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -72,7 +73,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFF0B1033),
+                      Color(0xFF132B5E),
+                      Color(0xFF1E3A8A),
+                    ],
+                  ),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Column(
@@ -97,20 +104,23 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
               const SizedBox(height: 20),
 
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
+              Column(
                 children: [
                   _statCard("Students", studentsCount.toString(), Icons.school),
 
+                  const SizedBox(height: 10),
+
                   _statCard("Teachers", teachersCount.toString(), Icons.person),
+
+                  const SizedBox(height: 10),
 
                   _statCard("Batches", batchesCount.toString(), Icons.groups),
 
+                  const SizedBox(height: 10),
+
                   _statCard("Fees", feesCount.toString(), Icons.receipt_long),
+
+                  const SizedBox(height: 10),
 
                   _statCard(
                     "Collection",
@@ -118,10 +128,75 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     Icons.account_balance_wallet,
                   ),
 
+                  const SizedBox(height: 10),
+
                   _statCard(
                     "Pending",
                     "₹${pendingAmount.toStringAsFixed(0)}",
                     Icons.warning_amber_rounded,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 25),
+
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Recent Activities",
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              Column(
+                children: [
+                  _activityCapsule(Icons.person_add, "New Student Added"),
+
+                  const SizedBox(height: 8),
+
+                  _activityCapsule(Icons.currency_rupee, "Fee Received"),
+
+                  const SizedBox(height: 8),
+
+                  _activityCapsule(Icons.fact_check, "Attendance Updated"),
+                ],
+              ),
+
+              const SizedBox(height: 25),
+
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Analytics",
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              Column(
+                children: [
+                  _statCard("Students", studentsCount.toString(), Icons.school),
+
+                  const SizedBox(height: 8),
+
+                  _statCard("Teachers", teachersCount.toString(), Icons.person),
+
+                  const SizedBox(height: 8),
+
+                  _statCard(
+                    "Collection",
+                    "₹${totalCollection.toStringAsFixed(0)}",
+                    Icons.account_balance_wallet,
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  _statCard(
+                    "Pending",
+                    "₹${pendingAmount.toStringAsFixed(0)}",
+                    Icons.warning,
                   ),
                 ],
               ),
@@ -138,12 +213,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
               const SizedBox(height: 12),
 
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
+              Column(
                 children: [
                   _dashboardCard(
                     context,
@@ -159,6 +229,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     },
                   ),
 
+                  const SizedBox(height: 8),
+
                   _dashboardCard(
                     context,
                     title: "Students",
@@ -172,6 +244,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       );
                     },
                   ),
+
+                  const SizedBox(height: 8),
 
                   _dashboardCard(
                     context,
@@ -187,19 +261,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     },
                   ),
 
-                  _dashboardCard(
-                    context,
-                    title: "Student Batch",
-                    icon: Icons.assignment_ind,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const StudentBatchScreen(),
-                        ),
-                      );
-                    },
-                  ),
+                  const SizedBox(height: 8),
 
                   _dashboardCard(
                     context,
@@ -215,6 +277,24 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     },
                   ),
 
+                  const SizedBox(height: 8),
+
+                  _dashboardCard(
+                    context,
+                    title: "Student Batch",
+                    icon: Icons.assignment_ind,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const StudentBatchScreen(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 8),
+
                   _dashboardCard(
                     context,
                     title: "Fees",
@@ -228,6 +308,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       );
                     },
                   ),
+
+                  const SizedBox(height: 8),
 
                   _dashboardCard(
                     context,
@@ -243,6 +325,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     },
                   ),
 
+                  const SizedBox(height: 8),
+
                   _dashboardCard(
                     context,
                     title: "Results",
@@ -252,6 +336,22 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         context,
                         MaterialPageRoute(
                           builder: (_) => const ResultEntryScreen(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  _dashboardCard(
+                    context,
+                    title: "Payment Approvals",
+                    icon: Icons.payments,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PaymentApprovalScreen(),
                         ),
                       );
                     },
@@ -266,28 +366,72 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   Widget _statCard(String title, String value, IconData icon) {
-    return Card(
-      elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(radius: 24, child: Icon(icon, size: 24)),
+    return Container(
+      height: 60,
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 18),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF0B1033), Color(0xFF132B5E)],
+        ),
+        borderRadius: BorderRadius.circular(100),
+        border: Border.all(color: const Color(0xFFFFD700), width: 1.5),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: const Color(0xFFFFD700), size: 22),
 
-            const SizedBox(height: 8),
+          const SizedBox(width: 12),
 
-            Flexible(
-              child: Text(
-                title,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
               ),
             ),
-          ],
+          ),
+
+          Text(
+            value,
+            style: const TextStyle(
+              color: Color(0xFFFFD700),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _activityCapsule(IconData icon, String title) {
+    return Container(
+      height: 55,
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 18),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF0B1033), Color(0xFF132B5E)],
         ),
+        borderRadius: BorderRadius.circular(100),
+        border: Border.all(color: const Color(0xFFFFD700), width: 1.5),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: const Color(0xFFFFD700)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -299,20 +443,36 @@ class _AdminDashboardState extends State<AdminDashboard> {
     required VoidCallback onTap,
   }) {
     return InkWell(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(100),
       onTap: onTap,
-      child: Card(
-        elevation: 5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      child: Container(
+        height: 70,
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 18),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF0B1033), Color(0xFF132B5E)],
+          ),
+          borderRadius: BorderRadius.circular(100),
+          border: Border.all(color: const Color(0xFFFFD700), width: 1.5),
+        ),
+        child: Row(
           children: [
-            CircleAvatar(radius: 28, child: Icon(icon, size: 28)),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            Icon(icon, color: const Color(0xFFFFD700)),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios,
+              color: Color(0xFFFFD700),
+              size: 16,
             ),
           ],
         ),
