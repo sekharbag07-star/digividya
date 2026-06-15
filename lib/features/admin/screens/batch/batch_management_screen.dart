@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/services/batch_service.dart';
+import '../../../../shared/widgets/delete_confirmation_dialog.dart';
 
 class BatchManagementScreen extends StatefulWidget {
   const BatchManagementScreen({super.key});
@@ -55,6 +56,10 @@ class _BatchManagementScreenState extends State<BatchManagementScreen> {
   }
 
   Future<void> deleteBatch(String batchId) async {
+    final confirmed = await showDeleteConfirmationDialog(context, "Batch");
+
+    if (confirmed != true) return;
+
     await _batchService.deleteBatch(batchId);
 
     if (!mounted) return;

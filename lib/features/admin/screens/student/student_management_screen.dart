@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/services/student_service.dart';
+import '../../../../shared/widgets/delete_confirmation_dialog.dart';
 
 class StudentManagementScreen extends StatefulWidget {
   const StudentManagementScreen({super.key});
@@ -59,6 +60,10 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
   }
 
   Future<void> deleteStudent(String studentId) async {
+    final confirmed = await showDeleteConfirmationDialog(context, "Student");
+
+    if (confirmed != true) return;
+
     await _studentService.deleteStudent(studentId);
 
     if (!mounted) return;
