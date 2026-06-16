@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1034614519401:android:cfe74ec1391878a74d14f8",
+        "mobilesdk_app_id": "1:1034614519401:android:68e162ef2ad7963a4d14f8",
         "android_client_info": {
-          "package_name": "com.example.coaching_erp"
+          "package_name": "com.digividya.app"
         }
       },
       "oauth_client": [],

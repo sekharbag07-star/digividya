@@ -112,22 +112,34 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Coaching ERP")),
-      body: Padding(
+      appBar: AppBar(centerTitle: true, title: const Text("DigiVidya")),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Center(
           child: SizedBox(
             width: 400,
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.school, size: 80),
+                const SizedBox(height: 20),
+
+                Image.asset('assets/logo/digividya_logo.png', height: 120),
 
                 const SizedBox(height: 20),
 
                 const Text(
-                  "Coaching ERP Login",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  'DigiVidya',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1565C0),
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                const Text(
+                  'Smart Coaching Management',
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
 
                 const SizedBox(height: 30),
@@ -137,6 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: const InputDecoration(
                     labelText: "Email",
                     border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.email),
                   ),
                 ),
 
@@ -148,6 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: const InputDecoration(
                     labelText: "Password",
                     border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.lock),
                   ),
                 ),
 
@@ -157,10 +171,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1565C0),
+                      foregroundColor: Colors.white,
+                    ),
                     onPressed: isLoading ? null : login,
                     child: isLoading
-                        ? const CircularProgressIndicator()
-                        : const Text("Login"),
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            "Login",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
                 ),
 
@@ -173,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       MaterialPageRoute(builder: (_) => const RegisterScreen()),
                     );
                   },
-                  child: const Text("New Student? Register"),
+                  child: const Text("New User? Create Account"),
                 ),
               ],
             ),

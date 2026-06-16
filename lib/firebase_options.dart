@@ -42,34 +42,32 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyCmmrHZlyC2o-zDWMET8ojcgtl_JqgzWnk',
-    appId: '1:1034614519401:web:8b1dc7bdd5484b524d14f8',
+    appId: '1:1034614519401:web:5975a055c1ee912f4d14f8',
     messagingSenderId: '1034614519401',
     projectId: 'coaching-erp-c6f7e',
     authDomain: 'coaching-erp-c6f7e.firebaseapp.com',
     storageBucket: 'coaching-erp-c6f7e.firebasestorage.app',
-    measurementId: 'G-Y56R9D72WB',
+    measurementId: 'G-QY9X6NQDM8',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCWuseGSiVuLX0f7oyOJNkapBvyijL23Bo',
-    appId: '1:1034614519401:android:cfe74ec1391878a74d14f8',
+    appId: '1:1034614519401:android:68e162ef2ad7963a4d14f8',
     messagingSenderId: '1034614519401',
     projectId: 'coaching-erp-c6f7e',
     storageBucket: 'coaching-erp-c6f7e.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDmu0q7wztiW1HtIwVmrXn5t9bHMlQ3ZuA',
-    appId: '1:1034614519401:ios:a72c23dca51da5494d14f8',
+    appId: '1:1034614519401:ios:1d8eb220fa18e55d4d14f8',
     messagingSenderId: '1034614519401',
     projectId: 'coaching-erp-c6f7e',
     storageBucket: 'coaching-erp-c6f7e.firebasestorage.app',
     iosBundleId: 'com.example.coachingErp',
   );
-
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyDmu0q7wztiW1HtIwVmrXn5t9bHMlQ3ZuA',
-    appId: '1:1034614519401:ios:a72c23dca51da5494d14f8',
+    appId: '1:1034614519401:ios:1d8eb220fa18e55d4d14f8',
     messagingSenderId: '1034614519401',
     projectId: 'coaching-erp-c6f7e',
     storageBucket: 'coaching-erp-c6f7e.firebasestorage.app',
@@ -78,11 +76,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyCmmrHZlyC2o-zDWMET8ojcgtl_JqgzWnk',
-    appId: '1:1034614519401:web:a039d8420fa601954d14f8',
+    appId: '1:1034614519401:web:f1a5f4e39c19ab994d14f8',
     messagingSenderId: '1034614519401',
     projectId: 'coaching-erp-c6f7e',
     authDomain: 'coaching-erp-c6f7e.firebaseapp.com',
     storageBucket: 'coaching-erp-c6f7e.firebasestorage.app',
-    measurementId: 'G-9WGCHRQD1B',
+    measurementId: 'G-KF776PQ6WQ',
   );
 }

@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    Timer(const Duration(seconds: 2), () {
+    Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const LoginScreen()),
@@ -25,11 +25,36 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
-        child: Text(
-          'Coaching ERP',
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('assets/logo/digividya_logo.png', height: 180),
+
+            const SizedBox(height: 20),
+
+            const Text(
+              'DigiVidya',
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1565C0),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            const Text(
+              'Smart Coaching Management',
+              style: TextStyle(fontSize: 15, color: Colors.grey),
+            ),
+
+            const SizedBox(height: 40),
+
+            const CircularProgressIndicator(),
+          ],
         ),
       ),
     );

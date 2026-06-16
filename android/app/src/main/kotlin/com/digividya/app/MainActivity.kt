@@ -1,4 +1,4 @@
-package com.example.coaching_erp
+package com.digividya.app
 
 import io.flutter.embedding.android.FlutterActivity
 
