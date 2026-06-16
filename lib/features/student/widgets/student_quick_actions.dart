@@ -5,6 +5,7 @@ import '../screens/actions/student_assignment_screen.dart';
 import '../screens/actions/student_result_screen.dart';
 import '../screens/actions/student_fee_screen.dart';
 import '../screens/actions/student_profile_screen.dart';
+import '../../live_classes/screens/live_class_list_screen.dart';
 
 class StudentQuickActions extends StatelessWidget {
   const StudentQuickActions({super.key});
@@ -58,7 +59,7 @@ class StudentQuickActions extends StatelessWidget {
           context,
           "Live Class",
           Icons.live_tv,
-          const StudentAssignmentScreen(), // temporary
+          const LiveClassListScreen(),
         ),
       ],
     );
@@ -98,9 +99,7 @@ class StudentQuickActions extends StatelessWidget {
               color: Colors.amber,
               size: 32,
             ),
-
             const SizedBox(height: 10),
-
             Text(
               title,
               style: const TextStyle(
