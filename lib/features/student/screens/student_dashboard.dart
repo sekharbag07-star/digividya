@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../auth/screens/login_screen.dart';
 import '../../payment/screens/payment_screen.dart';
 
 class StudentDashboard extends StatefulWidget {
@@ -33,14 +34,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
     final data = doc.data()!;
 
     bool subscriptionActive = data['subscriptionActive'] ?? false;
-
     bool trialActive = data['trialActive'] ?? false;
 
-    if (subscriptionActive) {
-      return;
-    }
-
-    if (trialActive) {
+    if (subscriptionActive || trialActive) {
       return;
     }
 
@@ -52,14 +48,39 @@ class _StudentDashboardState extends State<StudentDashboard> {
     );
   }
 
+  Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
+
+    if (!mounted) return;
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const LoginScreen(),
+      ),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Student Dashboard")),
+      appBar: AppBar(
+        title: const Text("Student Dashboard"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: logout,
+          ),
+        ],
+      ),
       body: const Center(
         child: Text(
           "Student Dashboard",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
