@@ -1,9 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../auth/screens/login_screen.dart';
 import '../../payment/screens/payment_screen.dart';
+
+import '../widgets/student_header.dart';
+import '../widgets/student_notice_card.dart';
+import '../widgets/student_live_class_card.dart';
+import '../widgets/student_stats.dart';
+import '../widgets/student_quick_actions.dart';
 
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({super.key});
@@ -44,7 +49,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => const PaymentScreen()),
+      MaterialPageRoute(
+        builder: (_) => const PaymentScreen(),
+      ),
     );
   }
 
@@ -53,13 +60,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
     if (!mounted) return;
 
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const LoginScreen(),
-      ),
-      (route) => false,
-    );
+    Navigator.popUntil(context, (route) => route.isFirst);
   }
 
   @override
@@ -69,18 +70,110 @@ class _StudentDashboardState extends State<StudentDashboard> {
         title: const Text("Student Dashboard"),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
             onPressed: logout,
+            icon: const Icon(Icons.logout),
           ),
         ],
       ),
-      body: const Center(
-        child: Text(
-          "Student Dashboard",
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            const StudentHeader(),
+
+            const SizedBox(height: 20),
+
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Notice Board",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            const StudentNoticeCard(
+              title: "Fee Reminder",
+              description:
+                  "Please submit this month's fee before 10th.",
+            ),
+
+            const StudentNoticeCard(
+              title: "Holiday Notice",
+              description:
+                  "Institute will remain closed on Sunday.",
+            ),
+
+            const SizedBox(height: 25),
+
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Live Classes",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            StudentLiveClassCard(
+              title: "Mathematics Revision",
+              teacher: "Rahul Sir",
+              time: "7:00 PM",
+              onJoin: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      "Live Class Integration Coming Soon",
+                    ),
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 25),
+
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "My Status",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            const StudentStats(),
+
+            const SizedBox(height: 25),
+
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Quick Actions",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            const StudentQuickActions(),
+
+            const SizedBox(height: 20),
+          ],
         ),
       ),
     );
