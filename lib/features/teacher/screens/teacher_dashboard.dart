@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../auth/screens/login_screen.dart';
+import 'attendance/teacher_attendance_screen.dart';
+import 'assignments/teacher_assignment_screen.dart';
+import 'live_classes/teacher_live_class_screen.dart';
+import 'notices/teacher_notice_screen.dart';
+import 'study_material/teacher_study_material_screen.dart';
 
 class TeacherDashboard extends StatelessWidget {
   const TeacherDashboard({super.key});
@@ -31,10 +36,71 @@ class TeacherDashboard extends StatelessWidget {
           ),
         ],
       ),
-      body: const Center(
-        child: Text(
-          'Teacher Dashboard',
-          style: TextStyle(fontSize: 24),
+      body: GridView.count(
+        padding: const EdgeInsets.all(16),
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        children: [
+          _card(
+            context,
+            "Attendance",
+            Icons.fact_check,
+            const TeacherAttendanceScreen(),
+          ),
+          _card(
+            context,
+            "Assignments",
+            Icons.assignment,
+            const TeacherAssignmentScreen(),
+          ),
+          _card(
+            context,
+            "Live Classes",
+            Icons.video_call,
+            const TeacherLiveClassScreen(),
+          ),
+          _card(
+            context,
+            "Notices",
+            Icons.campaign,
+            const TeacherNoticeScreen(),
+          ),
+          _card(
+            context,
+            "Study Material",
+            Icons.menu_book,
+            const TeacherStudyMaterialScreen(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _card(
+    BuildContext context,
+    String title,
+    IconData icon,
+    Widget screen,
+  ) {
+    return Card(
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => screen),
+          );
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 50),
+            const SizedBox(height: 10),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );

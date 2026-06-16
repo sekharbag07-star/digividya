@@ -4,6 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../payment/screens/payment_screen.dart';
 
+import '../../notices/models/notice_model.dart';
+import '../../notices/services/notice_service.dart';
+
 import '../widgets/student_header.dart';
 import '../widgets/student_notice_card.dart';
 import '../widgets/student_live_class_card.dart';
@@ -38,8 +41,11 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
     final data = doc.data()!;
 
-    bool subscriptionActive = data['subscriptionActive'] ?? false;
-    bool trialActive = data['trialActive'] ?? false;
+    bool subscriptionActive =
+        data['subscriptionActive'] ?? false;
+
+    bool trialActive =
+        data['trialActive'] ?? false;
 
     if (subscriptionActive || trialActive) {
       return;
@@ -60,7 +66,10 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
     if (!mounted) return;
 
-    Navigator.popUntil(context, (route) => route.isFirst);
+    Navigator.popUntil(
+      context,
+      (route) => route.isFirst,
+    );
   }
 
   @override
@@ -96,16 +105,39 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
             const SizedBox(height: 12),
 
-            const StudentNoticeCard(
-              title: "Fee Reminder",
-              description:
-                  "Please submit this month's fee before 10th.",
-            ),
+            StreamBuilder<List<NoticeModel>>(
+              stream: NoticeService().getNotices(
+                role: 'student',
+              ),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-            const StudentNoticeCard(
-              title: "Holiday Notice",
-              description:
-                  "Institute will remain closed on Sunday.",
+                if (!snapshot.hasData ||
+                    snapshot.data!.isEmpty) {
+                  return const StudentNoticeCard(
+                    title: "No Notices",
+                    description:
+                        "No notices available right now.",
+                  );
+                }
+
+                final notices = snapshot.data!;
+
+                return Column(
+                  children: notices.map((notice) {
+                    return StudentNoticeCard(
+                      title: notice.title,
+                      description:
+                          notice.description,
+                    );
+                  }).toList(),
+                );
+              },
             ),
 
             const SizedBox(height: 25),
@@ -128,7 +160,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
               teacher: "Rahul Sir",
               time: "7:00 PM",
               onJoin: () {
-                ScaffoldMessenger.of(context).showSnackBar(
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(
                   const SnackBar(
                     content: Text(
                       "Live Class Integration Coming Soon",
