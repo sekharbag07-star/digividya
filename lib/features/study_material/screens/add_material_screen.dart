@@ -7,26 +7,19 @@ class AddMaterialScreen extends StatefulWidget {
   const AddMaterialScreen({super.key});
 
   @override
-  State<AddMaterialScreen> createState() =>
-      _AddMaterialScreenState();
+  State<AddMaterialScreen> createState() => _AddMaterialScreenState();
 }
 
-class _AddMaterialScreenState
-    extends State<AddMaterialScreen> {
-  final _titleController =
-      TextEditingController();
+class _AddMaterialScreenState extends State<AddMaterialScreen> {
+  final _titleController = TextEditingController();
 
-  final _subjectController =
-      TextEditingController();
+  final _subjectController = TextEditingController();
 
-  final _batchController =
-      TextEditingController();
+  final _batchController = TextEditingController();
 
-  final _urlController =
-      TextEditingController();
+  final _urlController = TextEditingController();
 
-  final StudyMaterialService _service =
-      StudyMaterialService();
+  final StudyMaterialService _service = StudyMaterialService();
 
   String selectedType = 'pdf';
 
@@ -51,72 +44,43 @@ class _AddMaterialScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title:
-            const Text('Add Study Material'),
-      ),
+      appBar: AppBar(title: const Text('Add Study Material')),
       body: Padding(
-        padding:
-            const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
             TextField(
-              controller:
-                  _titleController,
-              decoration:
-                  const InputDecoration(
-                labelText: 'Title',
-              ),
+              controller: _titleController,
+              decoration: const InputDecoration(labelText: 'Title'),
             ),
 
             const SizedBox(height: 12),
 
             TextField(
-              controller:
-                  _subjectController,
-              decoration:
-                  const InputDecoration(
-                labelText: 'Subject',
-              ),
+              controller: _subjectController,
+              decoration: const InputDecoration(labelText: 'Subject'),
             ),
 
             const SizedBox(height: 12),
 
             TextField(
-              controller:
-                  _batchController,
-              decoration:
-                  const InputDecoration(
-                labelText: 'Batch',
-              ),
+              controller: _batchController,
+              decoration: const InputDecoration(labelText: 'Batch'),
             ),
 
             const SizedBox(height: 12),
 
             DropdownButtonFormField(
-              value: selectedType,
+              initialValue: selectedType,
               items: const [
-                DropdownMenuItem(
-                  value: 'pdf',
-                  child: Text('PDF'),
-                ),
-                DropdownMenuItem(
-                  value: 'video',
-                  child: Text('Video'),
-                ),
-                DropdownMenuItem(
-                  value: 'youtube',
-                  child: Text('YouTube'),
-                ),
-                DropdownMenuItem(
-                  value: 'notes',
-                  child: Text('Notes'),
-                ),
+                DropdownMenuItem(value: 'pdf', child: Text('PDF')),
+                DropdownMenuItem(value: 'video', child: Text('Video')),
+                DropdownMenuItem(value: 'youtube', child: Text('YouTube')),
+                DropdownMenuItem(value: 'notes', child: Text('Notes')),
               ],
               onChanged: (value) {
                 setState(() {
-                  selectedType =
-                      value.toString();
+                  selectedType = value.toString();
                 });
               },
             ),
@@ -124,22 +88,15 @@ class _AddMaterialScreenState
             const SizedBox(height: 12),
 
             TextField(
-              controller:
-                  _urlController,
-              decoration:
-                  const InputDecoration(
-                labelText:
-                    'File / Video URL',
-              ),
+              controller: _urlController,
+              decoration: const InputDecoration(labelText: 'File / Video URL'),
             ),
 
             const SizedBox(height: 25),
 
             ElevatedButton(
               onPressed: saveMaterial,
-              child: const Text(
-                'Save Material',
-              ),
+              child: const Text('Save Material'),
             ),
           ],
         ),

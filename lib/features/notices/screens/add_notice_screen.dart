@@ -7,18 +7,14 @@ class AddNoticeScreen extends StatefulWidget {
   const AddNoticeScreen({super.key});
 
   @override
-  State<AddNoticeScreen> createState() =>
-      _AddNoticeScreenState();
+  State<AddNoticeScreen> createState() => _AddNoticeScreenState();
 }
 
-class _AddNoticeScreenState
-    extends State<AddNoticeScreen> {
+class _AddNoticeScreenState extends State<AddNoticeScreen> {
   final _titleController = TextEditingController();
-  final _descriptionController =
-      TextEditingController();
+  final _descriptionController = TextEditingController();
 
-  final NoticeService _noticeService =
-      NoticeService();
+  final NoticeService _noticeService = NoticeService();
 
   String selectedType = 'text';
   String selectedRole = 'all';
@@ -37,8 +33,7 @@ class _AddNoticeScreenState
     final notice = NoticeModel(
       id: '',
       title: _titleController.text.trim(),
-      description:
-          _descriptionController.text.trim(),
+      description: _descriptionController.text.trim(),
       type: selectedType,
       targetRole: selectedRole,
       fileUrl: '',
@@ -53,11 +48,9 @@ class _AddNoticeScreenState
       isLoading = false;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Notice Added Successfully"),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Notice Added Successfully")));
 
     Navigator.pop(context);
   }
@@ -65,9 +58,7 @@ class _AddNoticeScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Add Notice"),
-      ),
+      appBar: AppBar(title: const Text("Add Notice")),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -94,16 +85,13 @@ class _AddNoticeScreenState
             const SizedBox(height: 15),
 
             DropdownButtonFormField<String>(
-              value: selectedType,
+              initialValue: selectedType,
               decoration: const InputDecoration(
                 labelText: "Notice Type",
                 border: OutlineInputBorder(),
               ),
               items: const [
-                DropdownMenuItem(
-                  value: "text",
-                  child: Text("Text Notice"),
-                ),
+                DropdownMenuItem(value: "text", child: Text("Text Notice")),
                 DropdownMenuItem(
                   value: "payment",
                   child: Text("Payment Notice"),
@@ -127,28 +115,16 @@ class _AddNoticeScreenState
             const SizedBox(height: 15),
 
             DropdownButtonFormField<String>(
-              value: selectedRole,
+              initialValue: selectedRole,
               decoration: const InputDecoration(
                 labelText: "Target Role",
                 border: OutlineInputBorder(),
               ),
               items: const [
-                DropdownMenuItem(
-                  value: "all",
-                  child: Text("All Users"),
-                ),
-                DropdownMenuItem(
-                  value: "student",
-                  child: Text("Students"),
-                ),
-                DropdownMenuItem(
-                  value: "teacher",
-                  child: Text("Teachers"),
-                ),
-                DropdownMenuItem(
-                  value: "parent",
-                  child: Text("Parents"),
-                ),
+                DropdownMenuItem(value: "all", child: Text("All Users")),
+                DropdownMenuItem(value: "student", child: Text("Students")),
+                DropdownMenuItem(value: "teacher", child: Text("Teachers")),
+                DropdownMenuItem(value: "parent", child: Text("Parents")),
               ],
               onChanged: (value) {
                 setState(() {
@@ -163,13 +139,10 @@ class _AddNoticeScreenState
               width: double.infinity,
               height: 55,
               child: ElevatedButton(
-                onPressed:
-                    isLoading ? null : saveNotice,
+                onPressed: isLoading ? null : saveNotice,
                 child: isLoading
                     ? const CircularProgressIndicator()
-                    : const Text(
-                        "Publish Notice",
-                      ),
+                    : const Text("Publish Notice"),
               ),
             ),
           ],
