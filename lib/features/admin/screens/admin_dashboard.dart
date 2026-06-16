@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../auth/screens/login_screen.dart';
 
 import '../../../../core/services/dashboard_service.dart';
 
@@ -61,7 +63,28 @@ class _AdminDashboardState extends State<AdminDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Admin Dashboard"), centerTitle: true),
+      appBar: AppBar(
+  title: const Text("Admin Dashboard"),
+  centerTitle: true,
+  actions: [
+    IconButton(
+      icon: const Icon(Icons.logout),
+      onPressed: () async {
+        await FirebaseAuth.instance.signOut();
+
+        if (!mounted) return;
+
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const LoginScreen(),
+          ),
+          (route) => false,
+        );
+      },
+    ),
+  ],
+),
       body: RefreshIndicator(
         onRefresh: loadDashboardData,
         child: SingleChildScrollView(
