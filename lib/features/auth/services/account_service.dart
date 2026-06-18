@@ -3,23 +3,40 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class AccountService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // OTP credential validate karega
+  Future<void> checkPhoneCredential(PhoneAuthCredential credential) async {
+    final credentialUser = await _auth.signInWithCredential(credential);
+
+    if (credentialUser.user == null) {
+      throw FirebaseAuthException(
+        code: 'phone-verification-failed',
+        message: 'Phone verification failed.',
+      );
+    }
+
+    // Phone verification ke baad session clean
+    await _auth.signOut();
+  }
+
+  // Email account create
   Future<UserCredential> createAccount({
     required String email,
     required String password,
   }) async {
     return await _auth.createUserWithEmailAndPassword(
-      email: email,
+      email: email.trim(),
       password: password,
     );
   }
 
+  // Email verification
   Future<void> sendEmailVerification(User user) async {
     await user.sendEmailVerification();
   }
 
+  // Firestore Student Record
   Future<void> createStudentRecord({
     required String uid,
     required String fullName,
@@ -33,8 +50,10 @@ class AccountService {
 
       'role': 'student',
 
-      // Admission Flow
+      // Profile
       'profileCompleted': false,
+
+      // Admission
       'admissionStatus': 'pending',
 
       // Payment
@@ -48,6 +67,9 @@ class AccountService {
       // Verification
       'phoneVerified': true,
       'emailVerified': false,
+
+      // Status
+      'active': true,
 
       // Audit
       'createdAt': Timestamp.now(),

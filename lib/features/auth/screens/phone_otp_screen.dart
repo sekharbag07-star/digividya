@@ -29,14 +29,13 @@ class PhoneOtpScreen extends StatefulWidget {
 }
 
 class _PhoneOtpScreenState extends State<PhoneOtpScreen> {
-  final otpController = TextEditingController();
+  final TextEditingController otpController = TextEditingController();
 
   final OtpService _otpService = OtpService();
 
   final AccountService _accountService = AccountService();
 
   String verificationId = '';
-
   bool isLoading = false;
 
   @override
@@ -96,10 +95,6 @@ class _PhoneOtpScreenState extends State<PhoneOtpScreen> {
     }
 
     try {
-      setState(() {
-        isLoading = true;
-      });
-
       final credential = _otpService.createCredential(
         verificationId: verificationId,
         otp: otpController.text.trim(),
@@ -112,44 +107,50 @@ class _PhoneOtpScreenState extends State<PhoneOtpScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
     }
   }
 
   Future<void> verifyAndCreateAccount(PhoneAuthCredential credential) async {
     try {
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      if (mounted) {
+        setState(() {
+          isLoading = true;
+        });
+      }
+
+      await _accountService.checkPhoneCredential(credential);
 
       final userCredential = await _accountService.createAccount(
-        email: widget.email,
+        email: widget.email.trim(),
         password: widget.password,
       );
 
-      await _accountService.sendEmailVerification(userCredential.user!);
+      final user = userCredential.user;
+
+      if (user == null) {
+        throw FirebaseAuthException(code: 'user-not-created');
+      }
+
+      await _accountService.sendEmailVerification(user);
 
       await _accountService.createStudentRecord(
-        uid: userCredential.user!.uid,
+        uid: user.uid,
         fullName: widget.fullName,
         phoneNumber: widget.phoneNumber,
-        email: widget.email,
+        email: widget.email.trim(),
       );
 
       await _accountService.logout();
 
       if (!mounted) return;
 
-      showDialog(
+      await showDialog(
         context: context,
         barrierDismissible: false,
         builder: (_) => AlertDialog(
           title: const Text('Registration Successful'),
           content: const Text(
-            'Phone verified.\n\nEmail verification link sent.\n\nVerify email and login.',
+            'Phone verified successfully.\n\nEmail verification link sent.\n\nPlease verify your email before login.',
           ),
           actions: [
             TextButton(
@@ -165,12 +166,24 @@ class _PhoneOtpScreenState extends State<PhoneOtpScreen> {
           ],
         ),
       );
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Registration Failed')),
+      );
     } catch (e) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
