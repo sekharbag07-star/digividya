@@ -1,6 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../services/otp_service.dart';
+import '../services/account_service.dart';
+
+import '../widgets/otp_header.dart';
+import '../widgets/otp_input.dart';
+import '../widgets/otp_actions.dart';
 
 import 'login_screen.dart';
 
@@ -25,9 +31,13 @@ class PhoneOtpScreen extends StatefulWidget {
 class _PhoneOtpScreenState extends State<PhoneOtpScreen> {
   final otpController = TextEditingController();
 
+  final OtpService _otpService = OtpService();
+
+  final AccountService _accountService = AccountService();
+
   String verificationId = '';
+
   bool isLoading = false;
-  bool otpSent = false;
 
   @override
   void initState() {
@@ -36,49 +46,52 @@ class _PhoneOtpScreenState extends State<PhoneOtpScreen> {
   }
 
   Future<void> sendOtp() async {
-    setState(() {
-      isLoading = true;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
 
-    await FirebaseAuth.instance.verifyPhoneNumber(
+    await _otpService.sendOtp(
       phoneNumber: '+91${widget.phoneNumber}',
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        await verifyAndCreateAccount(credential);
-      },
-      verificationFailed: (FirebaseAuthException e) {
+
+      onCodeSent: (verId) {
         if (!mounted) return;
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message ?? 'OTP Failed')),
-        );
-      },
-      codeSent: (String verId, int? resendToken) {
         verificationId = verId;
 
         setState(() {
-          otpSent = true;
           isLoading = false;
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('OTP Sent Successfully'),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('OTP Sent Successfully')));
       },
-      codeAutoRetrievalTimeout: (String verId) {
-        verificationId = verId;
+
+      onFailed: (e) {
+        if (!mounted) return;
+
+        setState(() {
+          isLoading = false;
+        });
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message ?? 'OTP Failed')));
+      },
+
+      onAutoVerify: (credential) async {
+        await verifyAndCreateAccount(credential);
       },
     );
   }
 
   Future<void> verifyOtp() async {
     if (otpController.text.trim().length != 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Enter valid OTP'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Enter valid OTP')));
       return;
     }
 
@@ -87,17 +100,18 @@ class _PhoneOtpScreenState extends State<PhoneOtpScreen> {
         isLoading = true;
       });
 
-      PhoneAuthCredential credential =
-          PhoneAuthProvider.credential(
+      final credential = _otpService.createCredential(
         verificationId: verificationId,
-        smsCode: otpController.text.trim(),
+        otp: otpController.text.trim(),
       );
 
       await verifyAndCreateAccount(credential);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) {
         setState(() {
@@ -107,57 +121,25 @@ class _PhoneOtpScreenState extends State<PhoneOtpScreen> {
     }
   }
 
-  Future<void> verifyAndCreateAccount(
-    PhoneAuthCredential credential,
-  ) async {
+  Future<void> verifyAndCreateAccount(PhoneAuthCredential credential) async {
     try {
-      await FirebaseAuth.instance.signInWithCredential(
-        credential,
-      );
+      await FirebaseAuth.instance.signInWithCredential(credential);
 
-      UserCredential userCredential =
-          await FirebaseAuth.instance
-              .createUserWithEmailAndPassword(
+      final userCredential = await _accountService.createAccount(
         email: widget.email,
         password: widget.password,
       );
 
-      await userCredential.user!.sendEmailVerification();
+      await _accountService.sendEmailVerification(userCredential.user!);
 
-      final uid = userCredential.user!.uid;
-
-      final now = DateTime.now();
-      final trialEnd = now.add(
-        const Duration(days: 7),
+      await _accountService.createStudentRecord(
+        uid: userCredential.user!.uid,
+        fullName: widget.fullName,
+        phoneNumber: widget.phoneNumber,
+        email: widget.email,
       );
 
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .set({
-        'name': widget.fullName,
-        'phone': widget.phoneNumber,
-        'phoneVerified': true,
-        'email': widget.email,
-        'role': 'student',
-        'active': true,
-
-        'trialActive': true,
-        'trialStartDate': Timestamp.fromDate(now),
-        'trialEndDate': Timestamp.fromDate(trialEnd),
-
-        'subscriptionActive': false,
-        'subscriptionStartDate': null,
-        'subscriptionEndDate': null,
-
-        'paymentStatus': 'trial',
-        'selectedPlan': 'Founder ₹149',
-        'transactionId': '',
-
-        'createdAt': Timestamp.now(),
-      });
-
-      await FirebaseAuth.instance.signOut();
+      await _accountService.logout();
 
       if (!mounted) return;
 
@@ -174,9 +156,7 @@ class _PhoneOtpScreenState extends State<PhoneOtpScreen> {
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => const LoginScreen(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
                   (route) => false,
                 );
               },
@@ -186,11 +166,11 @@ class _PhoneOtpScreenState extends State<PhoneOtpScreen> {
         ),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
@@ -203,64 +183,23 @@ class _PhoneOtpScreenState extends State<PhoneOtpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Phone Verification'),
-      ),
+      appBar: AppBar(title: const Text('Phone Verification')),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            const Icon(
-              Icons.phone_android,
-              size: 80,
-              color: Colors.blue,
-            ),
+            OtpHeader(phoneNumber: widget.phoneNumber),
 
             const SizedBox(height: 20),
 
-            Text(
-              '+91${widget.phoneNumber}',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            OtpInput(controller: otpController),
 
             const SizedBox(height: 20),
 
-            TextField(
-              controller: otpController,
-              keyboardType: TextInputType.number,
-              maxLength: 6,
-              decoration: const InputDecoration(
-                labelText: 'Enter OTP',
-                border: OutlineInputBorder(),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed:
-                    isLoading ? null : verifyOtp,
-                child: isLoading
-                    ? const CircularProgressIndicator()
-                    : const Text(
-                        'Verify OTP',
-                      ),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            TextButton(
-              onPressed: sendOtp,
-              child: const Text(
-                'Resend OTP',
-              ),
+            OtpActions(
+              isLoading: isLoading,
+              onVerify: verifyOtp,
+              onResend: sendOtp,
             ),
           ],
         ),

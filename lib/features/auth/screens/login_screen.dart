@@ -1,359 +1,214 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../admin/screens/admin_dashboard.dart';
-import '../../teacher/screens/teacher_dashboard.dart';
-import '../../student/screens/student_dashboard.dart';
-import '../../parent/screens/parent_dashboard.dart';
+import '../services/auth_service.dart';
+import '../services/role_router_service.dart';
+
+import '../widgets/login_logo.dart';
+import '../widgets/login_form.dart';
+import '../widgets/login_actions.dart';
+
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-const LoginScreen({super.key});
+  const LoginScreen({super.key});
 
-@override
-State<LoginScreen> createState() => _LoginScreenState();
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-final emailController = TextEditingController();
-final passwordController = TextEditingController();
+  final emailController = TextEditingController();
 
-bool isLoading = false;
-bool _obscurePassword = true;
+  final passwordController = TextEditingController();
 
-Future<void> login() async {
-try {
-setState(() {
-isLoading = true;
-});
+  final AuthService _authService = AuthService();
 
-  final email = emailController.text.trim();
-  final password = passwordController.text.trim();
+  bool isLoading = false;
+  bool obscurePassword = true;
 
-  if (email.isEmpty || password.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Please enter email and password"),
-      ),
-    );
-    return;
-  }
+  Future<void> login() async {
+    final messenger = ScaffoldMessenger.of(context);
 
-  UserCredential userCredential = await FirebaseAuth.instance
-      .signInWithEmailAndPassword(
-    email: email,
-    password: password,
-  );
+    final navigator = Navigator.of(context);
 
-  User user = userCredential.user!;
+    try {
+      setState(() {
+        isLoading = true;
+      });
 
-  await user.reload();
-  user = FirebaseAuth.instance.currentUser!;
+      final email = emailController.text.trim();
 
-  // Email Verification Check
-  if (!user.emailVerified) {
-    await FirebaseAuth.instance.signOut();
+      final password = passwordController.text.trim();
 
-    if (!mounted) return;
+      if (email.isEmpty || password.isEmpty) {
+        messenger.showSnackBar(
+          const SnackBar(content: Text("Please enter email and password")),
+        );
+        return;
+      }
 
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Email Not Verified"),
-        content: const Text(
-          "Please verify your email before login.",
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              await user.sendEmailVerification();
+      UserCredential credential = await _authService.login(
+        email: email,
+        password: password,
+      );
 
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      "Verification email sent again",
+      User user = credential.user!;
+
+      await user.reload();
+
+      user = FirebaseAuth.instance.currentUser!;
+
+      final verified = await _authService.isEmailVerified();
+
+      if (!verified) {
+        await FirebaseAuth.instance.signOut();
+
+        if (!mounted) return;
+
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text("Email Not Verified"),
+            content: const Text("Please verify your email before login."),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  await user.sendEmailVerification();
+
+                  if (!mounted) return;
+
+                  messenger.showSnackBar(
+                    const SnackBar(
+                      content: Text("Verification email sent again"),
                     ),
-                  ),
-                );
-              }
+                  );
 
-              Navigator.pop(context);
-            },
-            child: const Text("Resend Email"),
+                  Navigator.pop(context);
+                },
+                child: const Text("Resend Email"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("OK"),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
+        );
 
-    return;
+        return;
+      }
+
+      final screen = await RoleRouterService.getHomeScreen(user.uid);
+
+      if (!mounted) return;
+
+      if (screen == null) {
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Account pending approval, payment, or subscription activation.",
+            ),
+          ),
+        );
+        return;
+      }
+
+      navigator.pushReplacement(MaterialPageRoute(builder: (_) => screen));
+    } catch (e) {
+      if (!mounted) return;
+
+      messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
   }
 
-  String uid = user.uid;
+  Future<void> resetPassword() async {
+    final messenger = ScaffoldMessenger.of(context);
 
-  DocumentSnapshot userDoc = await FirebaseFirestore.instance
-      .collection('users')
-      .doc(uid)
-      .get();
-
-  if (!mounted) return;
-
-  if (!userDoc.exists) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("User data not found"),
-      ),
-    );
-    return;
-  }
-
-  String role = userDoc['role'];
-
-  Widget screen;
-
-  switch (role) {
-    case "admin":
-      screen = const AdminDashboard();
-      break;
-
-    case "teacher":
-      screen = const TeacherDashboard();
-      break;
-
-    case "student":
-      screen = const StudentDashboard();
-      break;
-
-    case "parent":
-      screen = const ParentDashboard();
-      break;
-
-    default:
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Invalid role"),
-        ),
+    if (emailController.text.trim().isEmpty) {
+      messenger.showSnackBar(
+        const SnackBar(content: Text("Enter your email first")),
       );
       return;
+    }
+
+    try {
+      await _authService.sendResetPassword(email: emailController.text.trim());
+
+      if (!mounted) return;
+
+      messenger.showSnackBar(
+        const SnackBar(content: Text("Password reset email sent")),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+    }
   }
 
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (_) => screen,
-    ),
-  );
-} on FirebaseAuthException catch (e) {
-  if (!mounted) return;
-
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(
-        e.message ?? "Login failed",
-      ),
-    ),
-  );
-} catch (e) {
-  if (!mounted) return;
-
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(e.toString()),
-    ),
-  );
-} finally {
-  if (mounted) {
-    setState(() {
-      isLoading = false;
-    });
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
-}
 
-}
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(centerTitle: true, title: const Text("DigiVidya")),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Center(
+          child: SizedBox(
+            width: 400,
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
 
-Future<void> resetPassword() async {
-if (emailController.text.trim().isEmpty) {
-ScaffoldMessenger.of(context).showSnackBar(
-const SnackBar(
-content: Text("Enter your email first"),
-),
-);
-return;
-}
+                const LoginLogo(),
 
-try {
-  await FirebaseAuth.instance.sendPasswordResetEmail(
-    email: emailController.text.trim(),
-  );
+                const SizedBox(height: 30),
 
-  if (!mounted) return;
-
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(
-      content: Text("Password reset email sent"),
-    ),
-  );
-} catch (e) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(e.toString()),
-    ),
-  );
-}
-
-}
-
-@override
-void dispose() {
-emailController.dispose();
-passwordController.dispose();
-super.dispose();
-}
-
-@override
-Widget build(BuildContext context) {
-return Scaffold(
-appBar: AppBar(
-centerTitle: true,
-title: const Text("DigiVidya"),
-),
-body: SingleChildScrollView(
-padding: const EdgeInsets.all(20),
-child: Center(
-child: SizedBox(
-width: 400,
-child: Column(
-children: [
-const SizedBox(height: 20),
-
-            Image.asset(
-              'assets/logo/digividya_logo.png',
-              height: 120,
-            ),
-
-            const SizedBox(height: 20),
-
-            const Text(
-              'DigiVidya',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1565C0),
-              ),
-            ),
-
-            const SizedBox(height: 8),
-
-            const Text(
-              'Smart Coaching Management',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
-            ),
-
-            const SizedBox(height: 30),
-
-            TextField(
-              controller: emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                labelText: "Email",
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.email),
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            TextField(
-              controller: passwordController,
-              obscureText: _obscurePassword,
-              keyboardType: TextInputType.visiblePassword,
-              textInputAction: TextInputAction.done,
-              onSubmitted: (_) => login(),
-              decoration: InputDecoration(
-                labelText: "Password",
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.lock),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscurePassword
-                        ? Icons.visibility_off
-                        : Icons.visibility,
-                  ),
-                  onPressed: () {
+                LoginForm(
+                  emailController: emailController,
+                  passwordController: passwordController,
+                  obscurePassword: obscurePassword,
+                  onTogglePassword: () {
                     setState(() {
-                      _obscurePassword = !_obscurePassword;
+                      obscurePassword = !obscurePassword;
                     });
                   },
+                  onPasswordSubmitted: (_) => login(),
                 ),
-              ),
-            ),
 
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: resetPassword,
-                child: const Text(
-                  "Forgot Password?",
+                const SizedBox(height: 10),
+
+                LoginActions(
+                  isLoading: isLoading,
+                  onLogin: login,
+                  onForgotPassword: resetPassword,
+                  onRegister: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                    );
+                  },
                 ),
-              ),
+              ],
             ),
-
-            const SizedBox(height: 10),
-
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1565C0),
-                  foregroundColor: Colors.white,
-                ),
-                onPressed: isLoading ? null : login,
-                child: isLoading
-                    ? const CircularProgressIndicator(
-                        color: Colors.white,
-                      )
-                    : const Text(
-                        "Login",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const RegisterScreen(),
-                  ),
-                );
-              },
-              child: const Text(
-                "New Here? Create Account",
-              ),
-            ),
-          ],
+          ),
         ),
       ),
-    ),
-  ),
-);
-
-}
+    );
+  }
 }

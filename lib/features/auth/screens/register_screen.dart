@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'phone_otp_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -57,58 +57,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return;
       }
 
-      setState(() {
-        isLoading = true;
-      });
-
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-            email: emailController.text.trim(),
-            password: passwordController.text.trim(),
-          );
-
-      final uid = userCredential.user!.uid;
-
-      final now = DateTime.now();
-      final trialEnd = now.add(const Duration(days: 7));
-
-      await FirebaseFirestore.instance.collection('users').doc(uid).set({
-        'name': nameController.text.trim(),
-        'phone': phoneController.text.trim(),
-        'email': emailController.text.trim(),
-
-        // User Role
-        'role': 'student',
-
-        // Status
-        'active': true,
-
-        // Trial
-        'trialActive': true,
-        'trialStartDate': Timestamp.fromDate(now),
-        'trialEndDate': Timestamp.fromDate(trialEnd),
-
-        // Subscription
-        'subscriptionActive': false,
-        'subscriptionStartDate': null,
-        'subscriptionEndDate': null,
-
-        // Payment
-        'paymentStatus': 'trial',
-        'selectedPlan': 'Founder ₹149',
-        'transactionId': '',
-
-        // Meta
-        'createdAt': Timestamp.now(),
-      });
-
       if (!mounted) return;
 
-      ScaffoldMessenger.of(
+      Navigator.push(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Registration Successful')));
+        MaterialPageRoute(
+          builder: (_) => PhoneOtpScreen(
+            fullName: nameController.text.trim(),
+            phoneNumber: phoneController.text.trim(),
+            email: emailController.text.trim(),
+            password: passwordController.text.trim(),
+          ),
+        ),
+      );
 
-      Navigator.pop(context);
+      return;
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message ?? 'Registration Failed')),

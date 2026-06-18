@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../auth/screens/login_screen.dart';
 import '../../payment/screens/payment_screen.dart';
 
 import '../../notices/models/notice_model.dart';
@@ -24,52 +25,79 @@ class _StudentDashboardState extends State<StudentDashboard> {
   @override
   void initState() {
     super.initState();
-    checkSubscription();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkSubscription();
+    });
   }
 
   Future<void> checkSubscription() async {
-    final user = FirebaseAuth.instance.currentUser;
+    try {
+      final user = FirebaseAuth.instance.currentUser;
 
-    if (user == null) return;
+      if (user == null) return;
 
-    final doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
 
-    if (!doc.exists) return;
+      if (!doc.exists) return;
 
-    final data = doc.data()!;
+      final data = doc.data()!;
 
-    bool subscriptionActive =
-        data['subscriptionActive'] ?? false;
+      bool subscriptionActive = data['subscriptionActive'] ?? false;
 
-    bool trialActive =
-        data['trialActive'] ?? false;
+      bool trialActive = data['trialActive'] ?? false;
 
-    if (subscriptionActive || trialActive) {
-      return;
+      Timestamp? trialEndTimestamp = data['trialEndDate'];
+
+      // Auto Trial Expiry
+      if (trialEndTimestamp != null) {
+        final trialEnd = trialEndTimestamp.toDate();
+
+        if (DateTime.now().isAfter(trialEnd)) {
+          trialActive = false;
+
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .update({'trialActive': false, 'paymentStatus': 'expired'});
+        }
+      }
+
+      // Payment Screen Redirect
+      if (!subscriptionActive && !trialActive) {
+        if (!mounted) return;
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const PaymentScreen()),
+        );
+      }
+    } catch (e) {
+      debugPrint('Subscription Check Error: $e');
     }
-
-    if (!mounted) return;
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const PaymentScreen(),
-      ),
-    );
   }
 
   Future<void> logout() async {
-    await FirebaseAuth.instance.signOut();
+    try {
+      await FirebaseAuth.instance.signOut();
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    Navigator.popUntil(
-      context,
-      (route) => route.isFirst,
-    );
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Logout Failed: $e')));
+    }
   }
 
   @override
@@ -78,10 +106,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
       appBar: AppBar(
         title: const Text("Student Dashboard"),
         actions: [
-          IconButton(
-            onPressed: logout,
-            icon: const Icon(Icons.logout),
-          ),
+          IconButton(onPressed: logout, icon: const Icon(Icons.logout)),
         ],
       ),
       body: SingleChildScrollView(
@@ -96,33 +121,23 @@ class _StudentDashboardState extends State<StudentDashboard> {
               alignment: Alignment.centerLeft,
               child: Text(
                 "Notice Board",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
             ),
 
             const SizedBox(height: 12),
 
             StreamBuilder<List<NoticeModel>>(
-              stream: NoticeService().getNotices(
-                role: 'student',
-              ),
+              stream: NoticeService().getNotices(role: 'student'),
               builder: (context, snapshot) {
-                if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
                 }
 
-                if (!snapshot.hasData ||
-                    snapshot.data!.isEmpty) {
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const StudentNoticeCard(
                     title: "No Notices",
-                    description:
-                        "No notices available right now.",
+                    description: "No notices available right now.",
                   );
                 }
 
@@ -132,8 +147,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                   children: notices.map((notice) {
                     return StudentNoticeCard(
                       title: notice.title,
-                      description:
-                          notice.description,
+                      description: notice.description,
                     );
                   }).toList(),
                 );
@@ -146,10 +160,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
               alignment: Alignment.centerLeft,
               child: Text(
                 "Live Classes",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
             ),
 
@@ -160,12 +171,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
               teacher: "Rahul Sir",
               time: "7:00 PM",
               onJoin: () {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text(
-                      "Live Class Integration Coming Soon",
-                    ),
+                    content: Text("Live Class Integration Coming Soon"),
                   ),
                 );
               },
@@ -177,10 +185,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
               alignment: Alignment.centerLeft,
               child: Text(
                 "My Status",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
             ),
 
@@ -194,10 +199,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
               alignment: Alignment.centerLeft,
               child: Text(
                 "Quick Actions",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
             ),
 
