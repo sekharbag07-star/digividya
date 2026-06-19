@@ -4,7 +4,12 @@ import 'package:flutter/material.dart';
 import '../../admin/screens/admin_dashboard.dart';
 import '../../teacher/screens/teacher_dashboard.dart';
 import '../../parent/screens/parent_dashboard.dart';
+
 import '../../student/screens/student_dashboard.dart';
+import '../../student/screens/approval/approval_waiting_screen.dart';
+
+import '../../payment/screens/payment_screen.dart';
+import '../../pravesh/screens/pravesh_screen.dart';
 
 class RoleRouterService {
   static Future<Widget?> getHomeScreen(String uid) async {
@@ -39,25 +44,37 @@ class RoleRouterService {
     }
   }
 
-  static Widget? _studentRouter(Map<String, dynamic> data) {
-    final admissionStatus = data['admissionStatus'] ?? 'pending';
+  static Widget _studentRouter(Map<String, dynamic> data) {
+    final profileCompleted = data['profileCompleted'] ?? false;
 
     final paymentStatus = data['paymentStatus'] ?? 'pending';
 
+    final admissionStatus = data['admissionStatus'] ?? 'pending';
+
     final subscriptionActive = data['subscriptionActive'] ?? false;
 
-    if (admissionStatus != 'approved') {
-      return null;
+    // STEP 1
+    if (!profileCompleted) {
+      return const PraveshScreen();
     }
 
-    if (paymentStatus != 'approved') {
-      return null;
+    // STEP 2
+    if (paymentStatus == 'pending') {
+      return const PaymentScreen();
     }
 
-    if (!subscriptionActive) {
-      return null;
+    // STEP 3
+    if (paymentStatus == 'paid' && admissionStatus == 'pending') {
+      return const ApprovalWaitingScreen();
     }
 
-    return const StudentDashboard();
+    // STEP 4
+    if (paymentStatus == 'approved' &&
+        admissionStatus == 'approved' &&
+        subscriptionActive) {
+      return const StudentDashboard();
+    }
+
+    return const ApprovalWaitingScreen();
   }
 }
