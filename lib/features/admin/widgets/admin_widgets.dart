@@ -1,4 +1,4 @@
-export 'dashboard_header.dart';
-export 'dashboard_stats.dart';
-export 'dashboard_activities.dart';
-export 'dashboard_actions.dart';
+export '../dashboard/widgets/dashboard_header.dart';
+export '../dashboard/widgets/dashboard_stats.dart';
+export '../dashboard/widgets/dashboard_activities.dart';
+export '../dashboard/widgets/dashboard_actions.dart';

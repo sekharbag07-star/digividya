@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../admin/screens/admin_dashboard.dart';
+import '../../admin/admin_home_screen.dart';
 import '../../teacher/screens/teacher_dashboard.dart';
 import '../../student/screens/student_dashboard.dart';
 import '../../parent/screens/parent_dashboard.dart';
@@ -115,7 +115,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
       switch (role) {
         case 'admin':
-          screen = const AdminDashboard();
+          screen = const AdminHomeScreen();
           break;
 
         case 'teacher':

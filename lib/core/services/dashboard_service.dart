@@ -19,6 +19,31 @@ class DashboardService {
     return (await _firestore.collection('fees').get()).docs.length;
   }
 
+  Future<int> getPendingFeesCount() async {
+    return (await _firestore
+            .collection('fees')
+            .where('status', isEqualTo: 'Pending')
+            .get())
+        .docs
+        .length;
+  }
+
+  Future<int> getNewAdmissionsCount() async {
+    final today = DateTime.now();
+
+    final startOfDay = DateTime(today.year, today.month, today.day);
+
+    return (await _firestore
+            .collection('students')
+            .where(
+              'createdAt',
+              isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay),
+            )
+            .get())
+        .docs
+        .length;
+  }
+
   Future<double> getTotalCollection() async {
     final snapshot = await _firestore
         .collection('fees')

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../screens/teacher/teacher_management_screen.dart';
-import '../screens/student/student_management_screen.dart';
-import '../screens/batch/batch_management_screen.dart';
-import '../screens/assignment/student_batch_screen.dart';
-import '../screens/attendance/attendance_screen.dart';
-import '../screens/fees/fee_management_screen.dart';
-import '../screens/exams/exam_management_screen.dart';
-import '../screens/results/result_entry_screen.dart';
-import '../screens/payment_approval_screen.dart';
+import '../../users/student/screens/student_management_screen.dart';
+import '../../users/teacher/screens/teacher_management_screen.dart';
+
+import '../../academics/screens/batch_management_screen.dart';
+import '../../academics/screens/student_batch_screen.dart';
+import '../../academics/screens/attendance_screen.dart';
+import '../../academics/screens/exam_management_screen.dart';
+import '../../academics/screens/result_entry_screen.dart';
+
+import '../../finance/screens/fee_management_screen.dart';
+import '../../finance/screens/payment_approval_screen.dart';
 
 class DashboardActions extends StatelessWidget {
   const DashboardActions({super.key});
@@ -94,37 +96,21 @@ class DashboardActions extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(100),
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => screen,
-            ),
-          );
+          Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
         },
         child: Container(
           height: 70,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 18,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 18),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [
-                Color(0xFF0B1033),
-                Color(0xFF132B5E),
-              ],
+              colors: [Color(0xFF0B1033), Color(0xFF132B5E)],
             ),
             borderRadius: BorderRadius.circular(100),
-            border: Border.all(
-              color: const Color(0xFFFFD700),
-              width: 1.5,
-            ),
+            border: Border.all(color: const Color(0xFFFFD700), width: 1.5),
           ),
           child: Row(
             children: [
-              Icon(
-                icon,
-                color: const Color(0xFFFFD700),
-              ),
+              Icon(icon, color: const Color(0xFFFFD700)),
 
               const SizedBox(width: 12),
 
