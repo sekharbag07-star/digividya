@@ -14,10 +14,16 @@ class PaymentApprovalScreen extends StatelessWidget {
         .doc(paymentId)
         .update({'status': 'approved'});
 
+    final now = DateTime.now();
+
     await FirebaseFirestore.instance.collection('users').doc(studentId).update({
       'paymentStatus': 'paid',
       'subscriptionActive': true,
       'transactionId': utr,
+      'subscriptionStartDate': Timestamp.fromDate(now),
+      'subscriptionEndDate': Timestamp.fromDate(
+        now.add(const Duration(days: 30)),
+      ),
     });
   }
 

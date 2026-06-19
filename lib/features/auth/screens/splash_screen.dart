@@ -81,6 +81,29 @@ class _SplashScreenState extends State<SplashScreen> {
           return;
         }
       }
+      Timestamp? subscriptionEndTimestamp = data['subscriptionEndDate'];
+
+      if (subscriptionActive && subscriptionEndTimestamp != null) {
+        final subscriptionEnd = subscriptionEndTimestamp.toDate();
+
+        if (DateTime.now().isAfter(subscriptionEnd)) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .update({
+                'subscriptionActive': false,
+                'paymentStatus': 'expired',
+              });
+
+          if (!mounted) return;
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const PaymentScreen()),
+          );
+          return;
+        }
+      }
 
       // ===============================
       // Role Based Navigation
