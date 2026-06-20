@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../notices/screens/notice_board_screen.dart';
+import '../../../notices/screens/notice_board_screen.dart';
 
 class TeacherNoticeScreen extends StatelessWidget {
   const TeacherNoticeScreen({super.key});
@@ -12,3 +12,6 @@ class TeacherNoticeScreen extends StatelessWidget {
     );
   }
 }
+
+
+

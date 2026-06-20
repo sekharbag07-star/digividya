@@ -9,8 +9,8 @@ import '../../academics/attendance/screens/attendance_screen.dart';
 import '../../academics/exams/screens/exam_management_screen.dart';
 import '../../academics/results/screens/result_entry_screen.dart';
 
-import '../../finance/screens/fee_management_screen.dart';
-import '../../finance/screens/payment_approval_screen.dart';
+import '../../finance/fees/screens/fee_management_screen.dart';
+import '../../finance/payments/screens/payment_approval_screen.dart';
 
 class DashboardActions extends StatelessWidget {
   const DashboardActions({super.key});
@@ -136,3 +136,6 @@ class DashboardActions extends StatelessWidget {
     );
   }
 }
+
+
+

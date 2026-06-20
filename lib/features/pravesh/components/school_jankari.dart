@@ -147,3 +147,6 @@ class SchoolJankari extends StatelessWidget {
     );
   }
 }
+
+
+

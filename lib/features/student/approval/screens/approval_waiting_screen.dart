@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../auth/screens/login_screen.dart';
+import '../../../auth/screens/login_screen.dart';
 
 class ApprovalWaitingScreen extends StatelessWidget {
   const ApprovalWaitingScreen({super.key});
@@ -72,3 +72,6 @@ class ApprovalWaitingScreen extends StatelessWidget {
     );
   }
 }
+
+
+

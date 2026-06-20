@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../auth/screens/login_screen.dart';
-import '../../payment/screens/payment_screen.dart';
+import '../../../auth/screens/login_screen.dart';
+import '../../../payment/screens/payment_screen.dart';
 
-import '../../notices/models/notice_model.dart';
-import '../../notices/services/notice_service.dart';
+import '../../../notices/models/notice_model.dart';
+import '../../../notices/services/notice_service.dart';
 
-import '../widgets/student_header.dart';
-import '../widgets/student_notice_card.dart';
-import '../widgets/student_live_class_card.dart';
-import '../widgets/student_stats.dart';
-import '../widgets/student_quick_actions.dart';
+import '../../widgets/student_header.dart';
+import '../../widgets/student_notice_card.dart';
+import '../../widgets/student_live_class_card.dart';
+import '../../widgets/student_stats.dart';
+import '../../widgets/student_quick_actions.dart';
 
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({super.key});
@@ -214,3 +214,6 @@ class _StudentDashboardState extends State<StudentDashboard> {
     );
   }
 }
+
+
+

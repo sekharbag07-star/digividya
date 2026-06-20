@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../admin/home/screens/admin_home_screen.dart';
-import '../../teacher/dashboard/teacher_dashboard.dart';
-import '../../parent/dashboard/parent_dashboard.dart';
+import '../../teacher/dashboard/screens/teacher_dashboard.dart';
+import '../../parent/dashboard/screens/parent_dashboard.dart';
 
-import '../../student/dashboard/student_dashboard.dart';
-import '../../student/approval/approval_waiting_screen.dart';
+import '../../student/dashboard/screens/student_dashboard.dart';
+import '../../student/approval/screens/approval_waiting_screen.dart';
 
 import '../../payment/screens/payment_screen.dart';
 import '../../pravesh/screens/pravesh_screen.dart';
@@ -78,3 +78,6 @@ class RoleRouterService {
     return const ApprovalWaitingScreen();
   }
 }
+
+
+

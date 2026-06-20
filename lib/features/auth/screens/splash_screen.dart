@@ -5,9 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../admin/home/screens/admin_home_screen.dart';
-import '../../teacher/dashboard/teacher_dashboard.dart';
-import '../../student/dashboard/student_dashboard.dart';
-import '../../parent/dashboard/parent_dashboard.dart';
+import '../../teacher/dashboard/screens/teacher_dashboard.dart';
+import '../../student/dashboard/screens/student_dashboard.dart';
+import '../../parent/dashboard/screens/parent_dashboard.dart';
 import '../../payment/screens/payment_screen.dart';
 import 'login_screen.dart';
 
@@ -195,3 +195,6 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
+
+
+
