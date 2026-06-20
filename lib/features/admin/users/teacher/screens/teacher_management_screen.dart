@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/services/teacher_service.dart';
-import '../../../../../shared/widgets/delete_confirmation_dialog.dart';
+import '../../../../../../shared/widgets/delete_confirmation_dialog.dart';
 
 class TeacherManagementScreen extends StatefulWidget {
   const TeacherManagementScreen({super.key});

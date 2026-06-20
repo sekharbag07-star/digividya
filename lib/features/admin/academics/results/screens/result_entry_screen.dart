@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/services/ranking_service.dart';
+import '../../../../../core/services/ranking_service.dart';
 
 class ResultEntryScreen extends StatefulWidget {
   const ResultEntryScreen({super.key});

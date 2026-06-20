@@ -4,10 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../admin/admin_home_screen.dart';
-import '../../teacher/screens/teacher_dashboard.dart';
-import '../../student/screens/student_dashboard.dart';
-import '../../parent/screens/parent_dashboard.dart';
+import '../../admin/home/screens/admin_home_screen.dart';
+import '../../teacher/dashboard/teacher_dashboard.dart';
+import '../../student/dashboard/student_dashboard.dart';
+import '../../parent/dashboard/parent_dashboard.dart';
 import '../../payment/screens/payment_screen.dart';
 import 'login_screen.dart';
 

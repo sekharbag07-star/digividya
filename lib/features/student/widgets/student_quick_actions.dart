@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../screens/actions/student_attendance_screen.dart';
-import '../screens/actions/student_assignment_screen.dart';
-import '../screens/actions/student_result_screen.dart';
-import '../screens/actions/student_fee_screen.dart';
-import '../screens/actions/student_profile_screen.dart';
+import '../attendance/student_attendance_screen.dart';
+import '../assignments/student_assignment_screen.dart';
+import '../results/student_result_screen.dart';
+import '../fees/student_fee_screen.dart';
+import '../profile/student_profile_screen.dart';
 import '../../live_classes/screens/live_class_list_screen.dart';
 
 class StudentQuickActions extends StatelessWidget {

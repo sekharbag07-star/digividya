@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/services/batch_service.dart';
-import '../../../../shared/widgets/delete_confirmation_dialog.dart';
+import '../../../../../core/services/batch_service.dart';
+import '../../../../../shared/widgets/delete_confirmation_dialog.dart';
 
 class BatchManagementScreen extends StatefulWidget {
   const BatchManagementScreen({super.key});

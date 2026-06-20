@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../auth/screens/login_screen.dart';
-import 'attendance/teacher_attendance_screen.dart';
-import 'assignments/teacher_assignment_screen.dart';
-import 'live_classes/teacher_live_class_screen.dart';
-import 'notices/teacher_notice_screen.dart';
-import 'study_material/teacher_study_material_screen.dart';
+import '../attendance/teacher_attendance_screen.dart';
+import '../assignments/teacher_assignment_screen.dart';
+import '../live_classes/teacher_live_class_screen.dart';
+import '../notices/teacher_notice_screen.dart';
+import '../study_material/teacher_study_material_screen.dart';
 
 class TeacherDashboard extends StatelessWidget {
   const TeacherDashboard({super.key});
