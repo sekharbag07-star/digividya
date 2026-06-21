@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../payment/screens/payment_screen.dart';
+import 'package:digividya/features/payment/screens/payment_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/pravesh_service.dart';
 import '../widgets/wizard/wizard_progress.dart';
@@ -341,6 +341,8 @@ class _PraveshScreenState extends State<PraveshScreen> {
     );
   }
 }
+
+
 
 
 

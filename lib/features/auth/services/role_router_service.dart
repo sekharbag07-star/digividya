@@ -6,7 +6,7 @@ import 'package:digividya/features/teacher/dashboard/screens/teacher_dashboard.d
 import 'package:digividya/features/parent/dashboard/screens/parent_dashboard.dart';
 
 import 'package:digividya/features/student/dashboard/screens/student_dashboard.dart';
-import '../../student/approval/screens/approval_waiting_screen.dart';
+import 'package:digividya/features/student/approval/screens/approval_waiting_screen.dart';
 
 import 'package:digividya/features/payment/screens/payment_screen.dart';
 import 'package:digividya/features/pravesh/screens/pravesh_screen.dart';
@@ -78,6 +78,8 @@ class RoleRouterService {
     return const ApprovalWaitingScreen();
   }
 }
+
+
 
 
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/services/dashboard_service.dart';
+import 'package:digividya/core/services/dashboard_service.dart';
 
 import '../widgets/lotus/lotus_dashboard.dart';
 import '../widgets/dashboard_activities.dart';
@@ -101,6 +101,8 @@ class _DashboardTabState extends State<DashboardTab> {
     );
   }
 }
+
+
 
 
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../../auth/screens/login_screen.dart';
+import 'package:digividya/features/auth/screens/login_screen.dart';
 
 class SettingsTab extends StatelessWidget {
   const SettingsTab({super.key});
@@ -55,6 +55,8 @@ class SettingsTab extends StatelessWidget {
     );
   }
 }
+
+
 
 
 

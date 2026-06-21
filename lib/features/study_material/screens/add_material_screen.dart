@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/study_material_model.dart';
-import '../../../core/services/study_material_service.dart';
+import 'package:digividya/core/services/study_material_service.dart';
 
 class AddMaterialScreen extends StatefulWidget {
   const AddMaterialScreen({super.key});
@@ -104,6 +104,8 @@ class _AddMaterialScreenState extends State<AddMaterialScreen> {
     );
   }
 }
+
+
 
 
 

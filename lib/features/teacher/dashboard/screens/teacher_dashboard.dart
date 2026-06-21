@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../../auth/screens/login_screen.dart';
+import 'package:digividya/features/auth/screens/login_screen.dart';
 import '../../attendance/screens/teacher_attendance_screen.dart';
 import '../../assignments/screens/teacher_assignment_screen.dart';
 import '../../live_classes/screens/teacher_live_class_screen.dart';
@@ -106,6 +106,8 @@ class TeacherDashboard extends StatelessWidget {
     );
   }
 }
+
+
 
 
 

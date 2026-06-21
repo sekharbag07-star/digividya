@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/services/notice_service.dart';
+import 'package:digividya/core/services/notice_service.dart';
 import '../models/notice_model.dart';
 
 class NoticeBoardScreen extends StatelessWidget {
@@ -84,6 +84,8 @@ class NoticeBoardScreen extends StatelessWidget {
     );
   }
 }
+
+
 
 
 

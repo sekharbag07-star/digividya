@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../../auth/screens/login_screen.dart';
-import '../../../payment/screens/payment_screen.dart';
+import 'package:digividya/features/auth/screens/login_screen.dart';
+import 'package:digividya/features/payment/screens/payment_screen.dart';
 
-import '../../../notices/models/notice_model.dart';
-import '../../../../core/services/notice_service.dart';
+import 'package:digividya/features/notices/models/notice_model.dart';
+import 'package:digividya/core/services/notice_service.dart';
 
 import '../widgets/student_header.dart';
 import '../../notices/widgets/student_notice_card.dart';
@@ -214,6 +214,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
     );
   }
 }
+
+
 
 
 
