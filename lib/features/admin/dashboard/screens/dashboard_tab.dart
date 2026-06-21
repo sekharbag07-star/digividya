@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../core/services/dashboard_service.dart';
+import 'package:digividya/core/services/dashboard_service.dart';
 
-import '../widgets/lotus/lotus_dashboard.dart';
-import '../widgets/dashboard_activities.dart';
-import '../widgets/lotus/welcome_banner.dart';
+import 'package:digividya/features/admin/dashboard/widgets/lotus/lotus_dashboard.dart';
+import 'package:digividya/features/admin/dashboard/widgets/dashboard_activities.dart';
+import 'package:digividya/features/admin/dashboard/widgets/lotus/welcome_banner.dart';
 
 class DashboardTab extends StatefulWidget {
   const DashboardTab({super.key});
@@ -101,6 +101,10 @@ class _DashboardTabState extends State<DashboardTab> {
     );
   }
 }
+
+
+
+
 
 
 

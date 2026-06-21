@@ -2,13 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import '../../../users/student/screens/student_management_screen.dart';
-import '../../../users/teacher/screens/teacher_management_screen.dart';
+import 'package:digividya/features/admin/users/student/screens/student_management_screen.dart';
+import 'package:digividya/features/admin/users/teacher/screens/teacher_management_screen.dart';
 
-import '../../../academics/batches/screens/batch_management_screen.dart';
+import 'package:digividya/features/admin/academics/batches/screens/batch_management_screen.dart';
 
-import '../../../finance/fees/screens/fee_management_screen.dart';
-import '../../../finance/payments/screens/payment_approval_screen.dart';
+import 'package:digividya/features/admin/finance/fees/screens/fee_management_screen.dart';
+import 'package:digividya/features/admin/finance/payments/screens/payment_approval_screen.dart';
 
 import 'lotus_center.dart';
 import 'lotus_petal.dart';
@@ -124,6 +124,11 @@ class _PetalItem {
     required this.screen,
   });
 }
+
+
+
+
+
 
 
 

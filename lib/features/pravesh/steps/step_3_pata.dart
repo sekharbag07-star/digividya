@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../components/pata_jankari.dart';
+import 'package:digividya/features/pravesh/components/pata_jankari.dart';
 
 class Step3Pata extends StatelessWidget {
   final TextEditingController addressController;
@@ -35,6 +35,10 @@ class Step3Pata extends StatelessWidget {
     );
   }
 }
+
+
+
+
 
 
 

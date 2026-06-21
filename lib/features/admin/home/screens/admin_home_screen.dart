@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../dashboard/screens/dashboard_tab.dart';
-import '../../users/screens/users_tab.dart';
-import '../../academics/screens/academics_tab.dart';
-import '../../finance/screens/finance_tab.dart';
-import '../../settings/screens/settings_tab.dart';
+import 'package:digividya/features/admin/dashboard/screens/dashboard_tab.dart';
+import 'package:digividya/features/admin/users/screens/users_tab.dart';
+import 'package:digividya/features/admin/academics/screens/academics_tab.dart';
+import 'package:digividya/features/admin/finance/screens/finance_tab.dart';
+import 'package:digividya/features/admin/settings/screens/settings_tab.dart';
 
-import '../../../study_material/screens/material_list_screen.dart';
-import '../../../live_classes/screens/live_class_list_screen.dart';
-import '../../../notices/screens/notice_list_screen.dart';
+import 'package:digividya/features/study_material/screens/material_list_screen.dart';
+import 'package:digividya/features/live_classes/screens/live_class_list_screen.dart';
+import 'package:digividya/features/notices/screens/notice_list_screen.dart';
 
 class AdminHomeScreen extends StatelessWidget {
   const AdminHomeScreen({super.key});
@@ -51,6 +51,11 @@ class AdminHomeScreen extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
 
 
 

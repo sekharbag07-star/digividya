@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../services/auth_service.dart';
-import '../services/role_router_service.dart';
+import 'package:digividya/features/auth/services/auth_service.dart';
+import 'package:digividya/features/auth/services/role_router_service.dart';
 
-import '../widgets/login_logo.dart';
-import '../widgets/login_form.dart';
-import '../widgets/login_actions.dart';
+import 'package:digividya/features/auth/widgets/login_logo.dart';
+import 'package:digividya/features/auth/widgets/login_form.dart';
+import 'package:digividya/features/auth/widgets/login_actions.dart';
 
 import 'register_screen.dart';
 
@@ -212,6 +212,10 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
+
+
+
 
 
 

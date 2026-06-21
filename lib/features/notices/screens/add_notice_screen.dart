@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../models/notice_model.dart';
-import '../../../core/services/notice_service.dart';
+import 'package:digividya/features/notices/models/notice_model.dart';
+import 'package:digividya/core/services/notice_service.dart';
 
 class AddNoticeScreen extends StatefulWidget {
   const AddNoticeScreen({super.key});
@@ -151,6 +151,10 @@ class _AddNoticeScreenState extends State<AddNoticeScreen> {
     );
   }
 }
+
+
+
+
 
 
 

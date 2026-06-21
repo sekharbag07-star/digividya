@@ -40,3 +40,7 @@ class StudentNoticeCard extends StatelessWidget {
 
 
 
+
+
+
+

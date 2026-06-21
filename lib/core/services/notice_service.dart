@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../features/notices/models/notice_model.dart';
+import 'package:digividya/features/notices/models/notice_model.dart';
 
 class NoticeService {
   final FirebaseFirestore _firestore =
@@ -41,6 +41,10 @@ class NoticeService {
         .delete();
   }
 }
+
+
+
+
 
 
 

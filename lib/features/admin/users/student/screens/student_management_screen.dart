@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../core/services/student_service.dart';
-import '../../../../../../shared/widgets/delete_confirmation_dialog.dart';
+import 'package:digividya/core/services/student_service.dart';
+import 'package:digividya/shared/widgets/delete_confirmation_dialog.dart';
 import 'student_profile_screen.dart';
 
 class StudentManagementScreen extends StatefulWidget {
@@ -277,6 +277,10 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
     );
   }
 }
+
+
+
+
 
 
 

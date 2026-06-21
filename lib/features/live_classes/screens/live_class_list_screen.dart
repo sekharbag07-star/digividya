@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../models/live_class_model.dart';
-import '../../../core/services/live_class_service.dart';
+import 'package:digividya/features/live_classes/models/live_class_model.dart';
+import 'package:digividya/core/services/live_class_service.dart';
 
 class LiveClassListScreen extends StatelessWidget {
   const LiveClassListScreen({super.key});
@@ -114,6 +114,10 @@ class LiveClassListScreen extends StatelessWidget {
     );
   }
 }
+
+
+
+
 
 
 
