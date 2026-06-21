@@ -58,10 +58,6 @@ class _SplashScreenState extends State<SplashScreen> {
         return;
       }
 
-      // ===============================
-      // Trial + Subscription Check
-      // ===============================
-
       final data = userDoc.data()!;
 
       bool subscriptionActive = data['subscriptionActive'] ?? false;
@@ -81,6 +77,7 @@ class _SplashScreenState extends State<SplashScreen> {
           return;
         }
       }
+
       Timestamp? subscriptionEndTimestamp = data['subscriptionEndDate'];
 
       if (subscriptionActive && subscriptionEndTimestamp != null) {
@@ -104,10 +101,6 @@ class _SplashScreenState extends State<SplashScreen> {
           return;
         }
       }
-
-      // ===============================
-      // Role Based Navigation
-      // ===============================
 
       final role = data['role'];
 
@@ -162,13 +155,24 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
+      body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/logo/digividya_logo.png', height: 180),
+            Expanded(
+              flex: 6,
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Center(
+                  child: Image.asset(
+                    'assets/logo/digividya_logo.png',
+                    width: double.infinity,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
 
             const Text(
               'DigiVidya',
@@ -179,26 +183,22 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
 
             const Text(
               'Smart Coaching Management',
               style: TextStyle(fontSize: 15, color: Colors.grey),
             ),
 
-            const SizedBox(height: 40),
+            const Spacer(),
 
-            const CircularProgressIndicator(),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 30),
+              child: CircularProgressIndicator(),
+            ),
           ],
         ),
       ),
     );
   }
 }
-
-
-
-
-
-
-
