@@ -59,7 +59,7 @@ class WelcomeBanner extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "${getGreeting()}, Admin",
+            "${getGreeting()}, Daliya Mam",
             style: const TextStyle(
               color: Colors.white,
               fontSize: 26,
@@ -130,10 +130,3 @@ class WelcomeBanner extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
