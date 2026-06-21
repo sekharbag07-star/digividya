@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../components/mata_pita_jankari.dart';
+import 'package:digividya/features/pravesh/components/mata_pita_jankari.dart';
 
 class Step2MataPita extends StatelessWidget {
   final TextEditingController fatherNameController;
@@ -58,6 +58,8 @@ class Step2MataPita extends StatelessWidget {
     );
   }
 }
+
+
 
 
 

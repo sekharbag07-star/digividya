@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/live_class_model.dart';
+import 'package:digividya/features/live_classes/models/live_class_model.dart';
 import 'package:digividya/core/services/live_class_service.dart';
 
 class AddLiveClassScreen extends StatefulWidget {
@@ -141,6 +141,8 @@ class _AddLiveClassScreenState
     );
   }
 }
+
+
 
 
 

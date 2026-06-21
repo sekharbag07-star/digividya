@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../features/study_material/models/study_material_model.dart';
+import 'package:digividya/features/study_material/models/study_material_model.dart';
 
 class StudyMaterialService {
   final FirebaseFirestore _firestore =
@@ -42,6 +42,8 @@ class StudyMaterialService {
         .delete();
   }
 }
+
+
 
 
 

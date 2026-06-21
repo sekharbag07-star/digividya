@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../attendance/screens/attendance_screen.dart';
-import '../batches/screens/batch_management_screen.dart';
-import '../student_batch/screens/student_batch_screen.dart';
-import '../exams/screens/exam_management_screen.dart';
-import '../results/screens/result_entry_screen.dart';
+import 'package:digividya/features/admin/academics/attendance/screens/attendance_screen.dart';
+import 'package:digividya/features/admin/academics/batches/screens/batch_management_screen.dart';
+import 'package:digividya/features/admin/academics/student_batch/screens/student_batch_screen.dart';
+import 'package:digividya/features/admin/academics/exams/screens/exam_management_screen.dart';
+import 'package:digividya/features/admin/academics/results/screens/result_entry_screen.dart';
 
 class AcademicsTab extends StatelessWidget {
   const AcademicsTab({super.key});
@@ -66,6 +66,9 @@ class AcademicsTab extends StatelessWidget {
     );
   }
 }
+
+
+
 
 
 

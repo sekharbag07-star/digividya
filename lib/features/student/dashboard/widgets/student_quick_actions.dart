@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../attendance/screens/student_attendance_screen.dart';
-import '../../assignments/screens/student_assignment_screen.dart';
-import '../../results/screens/student_result_screen.dart';
-import '../../fees/screens/student_fee_screen.dart';
-import '../../profile/screens/student_profile_screen.dart';
+import 'package:digividya/features/student/attendance/screens/student_attendance_screen.dart';
+import 'package:digividya/features/student/assignments/screens/student_assignment_screen.dart';
+import 'package:digividya/features/student/results/screens/student_result_screen.dart';
+import 'package:digividya/features/student/fees/screens/student_fee_screen.dart';
+import 'package:digividya/features/student/profile/screens/student_profile_screen.dart';
 import 'package:digividya/features/live_classes/screens/live_class_list_screen.dart';
 
 class StudentQuickActions extends StatelessWidget {
@@ -113,6 +113,9 @@ class StudentQuickActions extends StatelessWidget {
     );
   }
 }
+
+
+
 
 
 

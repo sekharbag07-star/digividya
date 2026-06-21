@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../components/dastavej_upload.dart';
+import 'package:digividya/features/pravesh/components/dastavej_upload.dart';
 
 class Step6Dastavej extends StatelessWidget {
   final VoidCallback? onStudentPhoto;
@@ -34,6 +34,8 @@ class Step6Dastavej extends StatelessWidget {
     );
   }
 }
+
+
 
 
 

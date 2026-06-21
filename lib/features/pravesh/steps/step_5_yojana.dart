@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../components/yojana_chayan.dart';
+import 'package:digividya/features/pravesh/components/yojana_chayan.dart';
 
 class Step5Yojana extends StatelessWidget {
   final String selectedClass;
@@ -26,6 +26,8 @@ class Step5Yojana extends StatelessWidget {
     );
   }
 }
+
+
 
 
 

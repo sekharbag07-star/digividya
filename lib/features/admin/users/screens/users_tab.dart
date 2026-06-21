@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../student/screens/student_directory_screen.dart';
-import '../student/screens/student_management_screen.dart';
-import '../teacher/screens/teacher_management_screen.dart';
+import 'package:digividya/features/admin/users/student/screens/student_directory_screen.dart';
+import 'package:digividya/features/admin/users/student/screens/student_management_screen.dart';
+import 'package:digividya/features/admin/users/teacher/screens/teacher_management_screen.dart';
 
 class UsersTab extends StatelessWidget {
   const UsersTab({super.key});
@@ -55,6 +55,9 @@ class UsersTab extends StatelessWidget {
     );
   }
 }
+
+
+
 
 
 

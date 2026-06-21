@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 
 import 'package:digividya/features/payment/screens/payment_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../services/pravesh_service.dart';
-import '../widgets/wizard/wizard_progress.dart';
-import '../widgets/wizard/wizard_navigation.dart';
+import 'package:digividya/features/pravesh/services/pravesh_service.dart';
+import 'package:digividya/features/pravesh/widgets/wizard/wizard_progress.dart';
+import 'package:digividya/features/pravesh/widgets/wizard/wizard_navigation.dart';
 
-import '../steps/step_1_vidyarthi.dart';
-import '../steps/step_2_mata_pita.dart';
-import '../steps/step_3_pata.dart';
-import '../steps/step_4_school.dart';
-import '../steps/step_5_yojana.dart';
-import '../steps/step_6_dastavej.dart';
-import '../steps/step_7_terms.dart';
+import 'package:digividya/features/pravesh/steps/step_1_vidyarthi.dart';
+import 'package:digividya/features/pravesh/steps/step_2_mata_pita.dart';
+import 'package:digividya/features/pravesh/steps/step_3_pata.dart';
+import 'package:digividya/features/pravesh/steps/step_4_school.dart';
+import 'package:digividya/features/pravesh/steps/step_5_yojana.dart';
+import 'package:digividya/features/pravesh/steps/step_6_dastavej.dart';
+import 'package:digividya/features/pravesh/steps/step_7_terms.dart';
 
 class PraveshScreen extends StatefulWidget {
   const PraveshScreen({super.key});
@@ -341,6 +341,9 @@ class _PraveshScreenState extends State<PraveshScreen> {
     );
   }
 }
+
+
+
 
 
 

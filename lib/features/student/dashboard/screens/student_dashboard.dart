@@ -8,11 +8,11 @@ import 'package:digividya/features/payment/screens/payment_screen.dart';
 import 'package:digividya/features/notices/models/notice_model.dart';
 import 'package:digividya/core/services/notice_service.dart';
 
-import '../widgets/student_header.dart';
-import '../../notices/widgets/student_notice_card.dart';
-import '../../live_classes/widgets/student_live_class_card.dart';
-import '../widgets/student_stats.dart';
-import '../widgets/student_quick_actions.dart';
+import 'package:digividya/features/student/dashboard/widgets/student_header.dart';
+import 'package:digividya/features/student/notices/widgets/student_notice_card.dart';
+import 'package:digividya/features/student/live_classes/widgets/student_live_class_card.dart';
+import 'package:digividya/features/student/dashboard/widgets/student_stats.dart';
+import 'package:digividya/features/student/dashboard/widgets/student_quick_actions.dart';
 
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({super.key});
@@ -214,6 +214,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
     );
   }
 }
+
+
+
 
 
 

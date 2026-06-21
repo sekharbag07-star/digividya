@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../fees/screens/fee_management_screen.dart';
-import '../payments/screens/payment_approval_screen.dart';
+import 'package:digividya/features/admin/finance/fees/screens/fee_management_screen.dart';
+import 'package:digividya/features/admin/finance/payments/screens/payment_approval_screen.dart';
 
 class FinanceTab extends StatelessWidget {
   const FinanceTab({super.key});
@@ -53,6 +53,8 @@ class FinanceTab extends StatelessWidget {
     );
   }
 }
+
+
 
 
 

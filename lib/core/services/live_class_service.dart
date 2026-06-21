@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../features/live_classes/models/live_class_model.dart';
+import 'package:digividya/features/live_classes/models/live_class_model.dart';
 
 class LiveClassService {
   final FirebaseFirestore _firestore =
@@ -49,6 +49,8 @@ class LiveClassService {
     });
   }
 }
+
+
 
 
 
