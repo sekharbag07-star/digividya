@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../models/analytics_model.dart';
-import '../services/analytics_service.dart';
-import '../widgets/analytics_grid.dart';
+import 'package:digividya/features/analytics/models/analytics_model.dart';
+import 'package:digividya/features/analytics/services/analytics_service.dart';
+import 'package:digividya/features/analytics/widgets/analytics_grid.dart';
 
 class AnalyticsDashboardScreen extends StatefulWidget {
   const AnalyticsDashboardScreen({super.key});
@@ -73,3 +73,4 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
     );
   }
 }
+

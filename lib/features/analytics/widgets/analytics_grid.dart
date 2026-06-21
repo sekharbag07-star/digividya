@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../models/analytics_model.dart';
-import 'analytics_card.dart';
+import 'package:digividya/features/analytics/models/analytics_model.dart';
+import 'package:digividya/features/analytics/widgets/analytics_card.dart';
 
 class AnalyticsGrid extends StatelessWidget {
   final AnalyticsModel analytics;
@@ -57,3 +57,4 @@ class AnalyticsGrid extends StatelessWidget {
     );
   }
 }
+

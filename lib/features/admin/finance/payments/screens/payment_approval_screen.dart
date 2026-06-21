@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../../../../core/services/subscription_service.dart';
+import 'package:digividya/core/services/subscription_service.dart';
 
 class PaymentApprovalScreen extends StatelessWidget {
   const PaymentApprovalScreen({super.key});
@@ -167,3 +167,4 @@ class PaymentApprovalScreen extends StatelessWidget {
     );
   }
 }
+

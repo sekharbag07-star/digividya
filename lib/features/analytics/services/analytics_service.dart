@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../models/analytics_model.dart';
+import 'package:digividya/features/analytics/models/analytics_model.dart';
 
 class AnalyticsService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -59,3 +59,4 @@ class AnalyticsService {
     );
   }
 }
+
