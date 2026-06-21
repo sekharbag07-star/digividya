@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../../core/services/dashboard_service.dart';
 
-import '../widgets/lotus/lotus_dashboard.dart';
+import '../../../../core/services/dashboard_service.dart';
+import 'package:digividya/features/analytics/screens/analytics_dashboard_screen.dart';
+
 import '../widgets/dashboard_activities.dart';
+import '../widgets/lotus/lotus_dashboard.dart';
 import '../widgets/lotus/welcome_banner.dart';
 
 class DashboardTab extends StatefulWidget {
@@ -31,11 +33,15 @@ class _DashboardTabState extends State<DashboardTab> {
 
   Future<void> loadDashboardData() async {
     final students = await _dashboardService.getStudentsCount();
+
     final teachers = await _dashboardService.getTeachersCount();
+
     final batches = await _dashboardService.getBatchesCount();
+
     final fees = await _dashboardService.getFeesCount();
 
     final collection = await _dashboardService.getTotalCollection();
+
     final pending = await _dashboardService.getPendingAmount();
 
     if (!mounted) return;
@@ -48,6 +54,13 @@ class _DashboardTabState extends State<DashboardTab> {
       totalCollection = collection;
       pendingAmount = pending;
     });
+  }
+
+  void openAnalyticsDashboard() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const AnalyticsDashboardScreen()),
+    );
   }
 
   @override
@@ -80,6 +93,21 @@ class _DashboardTabState extends State<DashboardTab> {
               pendingAmount: pendingAmount,
             ),
 
+            const SizedBox(height: 20),
+
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton.icon(
+                onPressed: openAnalyticsDashboard,
+                icon: const Icon(Icons.analytics),
+                label: const Text(
+                  'Open Analytics Dashboard',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+
             const SizedBox(height: 30),
 
             const Align(
@@ -101,6 +129,3 @@ class _DashboardTabState extends State<DashboardTab> {
     );
   }
 }
-
-
-
