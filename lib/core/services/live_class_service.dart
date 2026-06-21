@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../models/live_class_model.dart';
+import '../../features/live_classes/models/live_class_model.dart';
 
 class LiveClassService {
   final FirebaseFirestore _firestore =

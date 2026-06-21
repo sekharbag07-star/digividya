@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../models/study_material_model.dart';
+import '../../features/study_material/models/study_material_model.dart';
 
 class StudyMaterialService {
   final FirebaseFirestore _firestore =

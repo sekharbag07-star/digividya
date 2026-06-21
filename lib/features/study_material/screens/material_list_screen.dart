@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../services/study_material_service.dart';
+import '../../../core/services/study_material_service.dart';
 
 class MaterialListScreen
     extends StatelessWidget {

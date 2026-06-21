@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../models/notice_model.dart';
+import '../../features/notices/models/notice_model.dart';
 
 class NoticeService {
   final FirebaseFirestore _firestore =

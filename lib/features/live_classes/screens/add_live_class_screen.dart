@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/live_class_model.dart';
-import '../services/live_class_service.dart';
+import '../../../core/services/live_class_service.dart';
 
 class AddLiveClassScreen extends StatefulWidget {
   const AddLiveClassScreen({super.key});

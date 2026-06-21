@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/study_material_model.dart';
-import '../services/study_material_service.dart';
+import '../../../core/services/study_material_service.dart';
 
 class AddMaterialScreen extends StatefulWidget {
   const AddMaterialScreen({super.key});

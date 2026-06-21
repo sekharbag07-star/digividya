@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/notice_model.dart';
-import '../services/notice_service.dart';
+import '../../../core/services/notice_service.dart';
 
 class NoticeListScreen extends StatelessWidget {
   const NoticeListScreen({super.key});

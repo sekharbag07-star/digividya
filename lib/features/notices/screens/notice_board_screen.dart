@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../services/notice_service.dart';
+import '../../../core/services/notice_service.dart';
 import '../models/notice_model.dart';
 
 class NoticeBoardScreen extends StatelessWidget {
