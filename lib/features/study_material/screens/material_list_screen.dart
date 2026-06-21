@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/services/study_material_service.dart';
+import 'package:digividya/core/services/study_material_service.dart';
 
 class MaterialListScreen
     extends StatelessWidget {
@@ -74,6 +74,10 @@ class MaterialListScreen
     );
   }
 }
+
+
+
+
 
 
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../components/school_jankari.dart';
+import 'package:digividya/features/pravesh/components/school_jankari.dart';
 
 class Step4School extends StatelessWidget {
   final TextEditingController previousSchoolController;
@@ -42,6 +42,10 @@ class Step4School extends StatelessWidget {
     );
   }
 }
+
+
+
+
 
 
 

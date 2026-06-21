@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-
 import '../../../../core/services/dashboard_service.dart';
-import 'package:digividya/features/analytics/screens/analytics_dashboard_screen.dart';
 
-import '../widgets/dashboard_activities.dart';
 import '../widgets/lotus/lotus_dashboard.dart';
+import '../widgets/dashboard_activities.dart';
 import '../widgets/lotus/welcome_banner.dart';
 
 class DashboardTab extends StatefulWidget {
@@ -57,9 +55,8 @@ class _DashboardTabState extends State<DashboardTab> {
   }
 
   void openAnalyticsDashboard() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const AnalyticsDashboardScreen()),
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Analytics Dashboard coming soon')),
     );
   }
 

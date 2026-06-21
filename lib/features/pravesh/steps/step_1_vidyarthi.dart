@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../components/vidyarthi_jankari.dart';
+import 'package:digividya/features/pravesh/components/vidyarthi_jankari.dart';
 
 class Step1Vidyarthi extends StatelessWidget {
   final TextEditingController fullNameController;
@@ -39,6 +39,10 @@ class Step1Vidyarthi extends StatelessWidget {
     );
   }
 }
+
+
+
+
 
 
 

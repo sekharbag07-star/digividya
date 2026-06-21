@@ -1,15 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../admin/home/screens/admin_home_screen.dart';
-import '../../teacher/dashboard/screens/teacher_dashboard.dart';
-import '../../parent/dashboard/screens/parent_dashboard.dart';
+import 'package:digividya/features/admin/home/screens/admin_home_screen.dart';
+import 'package:digividya/features/teacher/dashboard/screens/teacher_dashboard.dart';
+import 'package:digividya/features/parent/dashboard/screens/parent_dashboard.dart';
 
-import '../../student/dashboard/screens/student_dashboard.dart';
-import '../../student/approval/screens/approval_waiting_screen.dart';
+import 'package:digividya/features/student/dashboard/screens/student_dashboard.dart';
+import 'package:digividya/features/student/approval/screens/approval_waiting_screen.dart';
 
-import '../../payment/screens/payment_screen.dart';
-import '../../pravesh/screens/pravesh_screen.dart';
+import 'package:digividya/features/payment/screens/payment_screen.dart';
+import 'package:digividya/features/pravesh/screens/pravesh_screen.dart';
 
 class RoleRouterService {
   static Future<Widget?> getHomeScreen(String uid) async {
@@ -78,6 +78,10 @@ class RoleRouterService {
     return const ApprovalWaitingScreen();
   }
 }
+
+
+
+
 
 
 
