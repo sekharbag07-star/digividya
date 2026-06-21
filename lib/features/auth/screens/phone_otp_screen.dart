@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../services/otp_service.dart';
-import '../services/account_service.dart';
+import 'package:digividya/features/auth/services/otp_service.dart';
+import 'package:digividya/features/auth/services/account_service.dart';
 
-import '../widgets/otp_header.dart';
-import '../widgets/otp_input.dart';
-import '../widgets/otp_actions.dart';
+import 'package:digividya/features/auth/widgets/otp_header.dart';
+import 'package:digividya/features/auth/widgets/otp_input.dart';
+import 'package:digividya/features/auth/widgets/otp_actions.dart';
 
 import 'login_screen.dart';
 

@@ -4,11 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../admin/home/screens/admin_home_screen.dart';
-import '../../teacher/dashboard/screens/teacher_dashboard.dart';
-import '../../student/dashboard/screens/student_dashboard.dart';
-import '../../parent/dashboard/screens/parent_dashboard.dart';
-import '../../payment/screens/payment_screen.dart';
+import 'package:digividya/features/admin/home/screens/admin_home_screen.dart';
+import 'package:digividya/features/teacher/dashboard/screens/teacher_dashboard.dart';
+import 'package:digividya/features/student/dashboard/screens/student_dashboard.dart';
+import 'package:digividya/features/parent/dashboard/screens/parent_dashboard.dart';
+import 'package:digividya/features/payment/screens/payment_screen.dart';
 import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
