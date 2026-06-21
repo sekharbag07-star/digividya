@@ -36,16 +36,38 @@ class _PaymentScreenState extends State<PaymentScreen> {
           .doc(user.uid)
           .get();
 
+      // Duplicate pending request check
+      final existingPayment = await FirebaseFirestore.instance
+          .collection('payments')
+          .where('studentId', isEqualTo: user.uid)
+          .where('status', isEqualTo: 'pending')
+          .get();
+
+      if (existingPayment.docs.isNotEmpty) {
+        throw Exception("You already have a pending payment request.");
+      }
+
+      // Create payment request
       await FirebaseFirestore.instance.collection('payments').add({
         "studentId": user.uid,
-        "studentName": studentDoc['name'] ?? '',
-        "email": studentDoc['email'] ?? '',
-        "plan": "Founder Batch",
+        "studentName": studentDoc.data()?['name'] ?? '',
+        "email": studentDoc.data()?['email'] ?? '',
+
+        "plan": "monthly",
         "amount": 149,
+        "durationDays": 30,
+
         "utrNumber": utrController.text.trim(),
+
         "status": "pending",
+
         "createdAt": FieldValue.serverTimestamp(),
       });
+
+      // Update user status
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).update(
+        {"paymentStatus": "pending"},
+      );
 
       if (!mounted) return;
 
@@ -67,13 +89,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
         ),
       );
     } catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -162,6 +188,3 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 }
-
-
-

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../../../core/services/subscription_service.dart';
+
 class PaymentApprovalScreen extends StatelessWidget {
   const PaymentApprovalScreen({super.key});
 
@@ -9,29 +11,34 @@ class PaymentApprovalScreen extends StatelessWidget {
     String studentId,
     String utr,
   ) async {
+    final subscriptionService = SubscriptionService();
+
+    // Mark payment approved
     await FirebaseFirestore.instance
         .collection('payments')
         .doc(paymentId)
-        .update({'status': 'approved'});
+        .update({
+          'status': 'approved',
+          'approvedAt': FieldValue.serverTimestamp(),
+        });
 
-    final now = DateTime.now();
-
-    await FirebaseFirestore.instance.collection('users').doc(studentId).update({
-      'paymentStatus': 'paid',
-      'subscriptionActive': true,
-      'transactionId': utr,
-      'subscriptionStartDate': Timestamp.fromDate(now),
-      'subscriptionEndDate': Timestamp.fromDate(
-        now.add(const Duration(days: 30)),
-      ),
-    });
+    // Activate subscription using central service
+    await subscriptionService.activateSubscription(
+      userId: studentId,
+      transactionId: utr,
+      durationDays: 30,
+      plan: 'monthly',
+    );
   }
 
   Future<void> rejectPayment(String paymentId) async {
     await FirebaseFirestore.instance
         .collection('payments')
         .doc(paymentId)
-        .update({'status': 'rejected'});
+        .update({
+          'status': 'rejected',
+          'rejectedAt': FieldValue.serverTimestamp(),
+        });
   }
 
   @override
@@ -44,15 +51,19 @@ class PaymentApprovalScreen extends StatelessWidget {
             .where('status', isEqualTo: 'pending')
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final payments = snapshot.data!.docs;
-
-          if (payments.isEmpty) {
-            return const Center(child: Text("No Pending Payments"));
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
           }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text('No Pending Payments'));
+          }
+
+          final payments = snapshot.data!.docs;
 
           return ListView.builder(
             itemCount: payments.length,
@@ -78,9 +89,11 @@ class PaymentApprovalScreen extends StatelessWidget {
 
                       Text(data['email'] ?? ''),
 
-                      Text("₹${data['amount']}"),
+                      Text('₹${data['amount'] ?? 0}'),
 
-                      Text("UTR: ${data['utrNumber']}"),
+                      Text('Plan: ${data['plan'] ?? 'monthly'}'),
+
+                      Text('UTR: ${data['utrNumber'] ?? ''}'),
 
                       const SizedBox(height: 10),
 
@@ -89,21 +102,29 @@ class PaymentApprovalScreen extends StatelessWidget {
                           Expanded(
                             child: ElevatedButton(
                               onPressed: () async {
-                                await approvePayment(
-                                  payments[index].id,
-                                  data['studentId'],
-                                  data['utrNumber'],
-                                );
-
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Payment Approved"),
-                                    ),
+                                try {
+                                  await approvePayment(
+                                    payments[index].id,
+                                    data['studentId'],
+                                    data['utrNumber'],
                                   );
+
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Payment Approved'),
+                                      ),
+                                    );
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(e.toString())),
+                                    );
+                                  }
                                 }
                               },
-                              child: const Text("Approve"),
+                              child: const Text('Approve'),
                             ),
                           ),
 
@@ -112,17 +133,25 @@ class PaymentApprovalScreen extends StatelessWidget {
                           Expanded(
                             child: ElevatedButton(
                               onPressed: () async {
-                                await rejectPayment(payments[index].id);
+                                try {
+                                  await rejectPayment(payments[index].id);
 
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Payment Rejected"),
-                                    ),
-                                  );
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Payment Rejected'),
+                                      ),
+                                    );
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(e.toString())),
+                                    );
+                                  }
                                 }
                               },
-                              child: const Text("Reject"),
+                              child: const Text('Reject'),
                             ),
                           ),
                         ],
@@ -138,6 +167,3 @@ class PaymentApprovalScreen extends StatelessWidget {
     );
   }
 }
-
-
-
