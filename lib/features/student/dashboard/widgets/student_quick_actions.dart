@@ -6,6 +6,7 @@ import 'package:digividya/features/student/results/screens/student_result_screen
 import 'package:digividya/features/student/fees/screens/student_fee_screen.dart';
 import 'package:digividya/features/student/profile/screens/student_profile_screen.dart';
 import 'package:digividya/features/live_classes/screens/live_class_list_screen.dart';
+import 'package:digividya/features/student/study_material/screens/student_study_material_screen.dart';
 
 class StudentQuickActions extends StatelessWidget {
   const StudentQuickActions({super.key});
@@ -61,6 +62,13 @@ class StudentQuickActions extends StatelessWidget {
           Icons.live_tv,
           const LiveClassListScreen(),
         ),
+
+        _actionCard(
+          context,
+          "Study Material",
+          Icons.menu_book,
+          const StudentStudyMaterialScreen(),
+        ),
       ],
     );
   }
@@ -74,31 +82,19 @@ class StudentQuickActions extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(15),
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => screen,
-          ),
-        );
+        Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
       },
       child: Container(
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [
-              Color(0xFF0B1033),
-              Color(0xFF132B5E),
-            ],
+            colors: [Color(0xFF0B1033), Color(0xFF132B5E)],
           ),
           borderRadius: BorderRadius.circular(15),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: Colors.amber,
-              size: 32,
-            ),
+            Icon(icon, color: Colors.amber, size: 32),
             const SizedBox(height: 10),
             Text(
               title,
@@ -113,11 +109,3 @@ class StudentQuickActions extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-

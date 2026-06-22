@@ -7,20 +7,17 @@ class AddLiveClassScreen extends StatefulWidget {
   const AddLiveClassScreen({super.key});
 
   @override
-  State<AddLiveClassScreen> createState() =>
-      _AddLiveClassScreenState();
+  State<AddLiveClassScreen> createState() => _AddLiveClassScreenState();
 }
 
-class _AddLiveClassScreenState
-    extends State<AddLiveClassScreen> {
+class _AddLiveClassScreenState extends State<AddLiveClassScreen> {
   final _titleController = TextEditingController();
   final _teacherController = TextEditingController();
   final _linkController = TextEditingController();
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
 
-  final LiveClassService _service =
-      LiveClassService();
+  final LiveClassService _service = LiveClassService();
 
   bool isLoading = false;
 
@@ -35,12 +32,19 @@ class _AddLiveClassScreenState
 
     final liveClass = LiveClassModel(
       id: '',
+
       title: _titleController.text.trim(),
       teacher: _teacherController.text.trim(),
+
       meetingLink: _linkController.text.trim(),
+
       date: _dateController.text.trim(),
       time: _timeController.text.trim(),
+
       isActive: true,
+
+      batchId: '',
+      batchName: '',
     );
 
     await _service.addLiveClass(liveClass);
@@ -52,11 +56,7 @@ class _AddLiveClassScreenState
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          "Live Class Created Successfully",
-        ),
-      ),
+      const SnackBar(content: Text("Live Class Created Successfully")),
     );
 
     Navigator.pop(context);
@@ -65,9 +65,7 @@ class _AddLiveClassScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Add Live Class"),
-      ),
+      appBar: AppBar(title: const Text("Add Live Class")),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -126,13 +124,10 @@ class _AddLiveClassScreenState
               width: double.infinity,
               height: 55,
               child: ElevatedButton(
-                onPressed:
-                    isLoading ? null : saveClass,
+                onPressed: isLoading ? null : saveClass,
                 child: isLoading
                     ? const CircularProgressIndicator()
-                    : const Text(
-                        "Create Live Class",
-                      ),
+                    : const Text("Create Live Class"),
               ),
             ),
           ],
@@ -141,10 +136,3 @@ class _AddLiveClassScreenState
     );
   }
 }
-
-
-
-
-
-
-
