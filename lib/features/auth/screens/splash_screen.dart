@@ -164,7 +164,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 padding: const EdgeInsets.all(24),
                 child: Center(
                   child: Image.asset(
-                    'assets/logo/digividya_logo.png',
+                    'assets/logo/splash_logo.png',
                     width: double.infinity,
                     fit: BoxFit.contain,
                   ),
