@@ -77,14 +77,29 @@ class AccountService {
     }, SetOptions(merge: true));
   }
 
+  Future<void> createParentRecord({
+    required String uid,
+    required String fullName,
+    required String phoneNumber,
+    required String email,
+  }) async {
+    await _firestore.collection('users').doc(uid).set({
+      'name': fullName,
+      'phone': phoneNumber,
+      'email': email,
+
+      'role': 'parent',
+
+      'studentUid': '',
+
+      'active': true,
+
+      'createdAt': Timestamp.now(),
+      'updatedAt': Timestamp.now(),
+    });
+  }
+
   Future<void> logout() async {
     await _auth.signOut();
   }
 }
-
-
-
-
-
-
-
