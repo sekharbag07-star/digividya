@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:digividya/core/services/notice_service.dart';
+import 'package:digividya/features/notices/models/notice_model.dart';
 
 class ParentNoticeScreen extends StatelessWidget {
   const ParentNoticeScreen({super.key});
@@ -7,24 +9,35 @@ class ParentNoticeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Notices')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: const [
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.campaign),
-              title: Text('Holiday Notice'),
-              subtitle: Text('Institute will remain closed tomorrow'),
-            ),
-          ),
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.campaign),
-              title: Text('Exam Schedule'),
-              subtitle: Text('Monthly test starts next week'),
-            ),
-          ),
-        ],
+      body: StreamBuilder<List<NoticeModel>>(
+        stream: NoticeService().getNotices(role: 'parent'),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final notices = snapshot.data!;
+
+          if (notices.isEmpty) {
+            return const Center(child: Text('No Notices Available'));
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: notices.length,
+            itemBuilder: (context, index) {
+              final notice = notices[index];
+
+              return Card(
+                child: ListTile(
+                  leading: const Icon(Icons.campaign),
+                  title: Text(notice.title),
+                  subtitle: Text(notice.description),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
