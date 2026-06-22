@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:digividya/features/parent/auth/screens/parent_register_screen.dart';
 
 class LoginActions extends StatelessWidget {
   final bool isLoading;
@@ -53,14 +54,16 @@ class LoginActions extends StatelessWidget {
           onPressed: onRegister,
           child: const Text("New Here? Create Account"),
         ),
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ParentRegisterScreen()),
+            );
+          },
+          child: const Text("Parent Registration"),
+        ),
       ],
     );
   }
 }
-
-
-
-
-
-
-

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:digividya/features/admin/users/student/screens/student_directory_screen.dart';
 import 'package:digividya/features/admin/users/student/screens/student_management_screen.dart';
 import 'package:digividya/features/admin/users/teacher/screens/teacher_management_screen.dart';
+import 'package:digividya/features/admin/users/parent_linking/screens/parent_student_link_screen.dart';
 
 class UsersTab extends StatelessWidget {
   const UsersTab({super.key});
@@ -32,6 +33,13 @@ class UsersTab extends StatelessWidget {
           icon: Icons.badge,
           screen: const StudentDirectoryScreen(),
         ),
+
+        _tile(
+          context,
+          title: 'Parent-Student Linking',
+          icon: Icons.link,
+          screen: const ParentStudentLinkScreen(),
+        ),
       ],
     );
   }
@@ -55,11 +63,3 @@ class UsersTab extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
