@@ -3,28 +3,30 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  String generateChatId({
-    required String parentUid,
-    required String teacherUid,
-  }) {
-    return '${parentUid}_$teacherUid';
-  }
-
   Future<void> sendMessage({
-    required String parentUid,
-    required String teacherUid,
+    required String chatId,
+    required String chatType,
     required String senderId,
     required String receiverId,
     required String senderRole,
     required String message,
-  }) async {
-    final chatId = generateChatId(parentUid: parentUid, teacherUid: teacherUid);
 
+    String? parentUid,
+    String? teacherUid,
+    String? supportUid,
+  }) async {
     await _firestore.collection('chats').doc(chatId).set({
+      'chatType': chatType,
+
       'parentUid': parentUid,
       'teacherUid': teacherUid,
+      'supportUid': supportUid,
+
+      'participants': [senderId, receiverId],
+
       'lastMessage': message,
       'lastMessageTime': Timestamp.now(),
+      'createdAt': Timestamp.now(),
     }, SetOptions(merge: true));
 
     await _firestore
@@ -35,18 +37,16 @@ class ChatService {
           'senderId': senderId,
           'receiverId': receiverId,
           'senderRole': senderRole,
+
           'message': message,
+          'messageType': 'text',
+
           'isRead': false,
           'createdAt': Timestamp.now(),
         });
   }
 
-  Stream<QuerySnapshot> getMessages({
-    required String parentUid,
-    required String teacherUid,
-  }) {
-    final chatId = generateChatId(parentUid: parentUid, teacherUid: teacherUid);
-
+  Stream<QuerySnapshot> getMessages(String chatId) {
     return _firestore
         .collection('chats')
         .doc(chatId)
@@ -55,12 +55,7 @@ class ChatService {
         .snapshots();
   }
 
-  Future<void> markAsRead({
-    required String parentUid,
-    required String teacherUid,
-  }) async {
-    final chatId = generateChatId(parentUid: parentUid, teacherUid: teacherUid);
-
+  Future<void> markAsRead(String chatId) async {
     final docs = await _firestore
         .collection('chats')
         .doc(chatId)
@@ -68,8 +63,20 @@ class ChatService {
         .where('isRead', isEqualTo: false)
         .get();
 
+    final batch = _firestore.batch();
+
     for (final doc in docs.docs) {
-      await doc.reference.update({'isRead': true});
+      batch.update(doc.reference, {'isRead': true});
     }
+
+    await batch.commit();
+  }
+
+  Stream<QuerySnapshot> getUserChats(String userId) {
+    return _firestore
+        .collection('chats')
+        .where('participants', arrayContains: userId)
+        .orderBy('lastMessageTime', descending: true)
+        .snapshots();
   }
 }

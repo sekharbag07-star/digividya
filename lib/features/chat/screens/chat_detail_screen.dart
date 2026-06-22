@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:digividya/core/services/chat_service.dart';
+
 class ChatDetailScreen extends StatefulWidget {
   final String chatId;
 
@@ -27,6 +29,8 @@ class ChatDetailScreen extends StatefulWidget {
 }
 
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
+  final ChatService _chatService = ChatService();
+
   final TextEditingController messageController = TextEditingController();
 
   bool isSending = false;
@@ -41,30 +45,22 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         isSending = true;
       });
 
-      await FirebaseFirestore.instance
-          .collection('chats')
-          .doc(widget.chatId)
-          .collection('messages')
-          .add({
-            'senderId': widget.currentUserId,
-            'receiverId': widget.receiverId,
-            'senderRole': widget.currentUserRole,
-            'message': text,
-            'isRead': false,
-            'messageType': 'text',
-            'createdAt': Timestamp.now(),
-          });
-
-      await FirebaseFirestore.instance
-          .collection('chats')
-          .doc(widget.chatId)
-          .set({
-            'chatType': widget.chatType,
-            'lastMessage': text,
-            'lastMessageTime': Timestamp.now(),
-          }, SetOptions(merge: true));
+      await _chatService.sendMessage(
+        chatId: widget.chatId,
+        chatType: widget.chatType,
+        senderId: widget.currentUserId,
+        receiverId: widget.receiverId,
+        senderRole: widget.currentUserRole,
+        message: text,
+      );
 
       messageController.clear();
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to send message: $e')));
     } finally {
       if (mounted) {
         setState(() {
@@ -96,7 +92,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         padding: const EdgeInsets.all(12),
-        constraints: const BoxConstraints(maxWidth: 300),
+        constraints: const BoxConstraints(maxWidth: 320),
         decoration: BoxDecoration(
           color: isMine ? Colors.blue.shade100 : Colors.grey.shade200,
           borderRadius: BorderRadius.circular(14),
@@ -108,18 +104,14 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final messagesRef = FirebaseFirestore.instance
-        .collection('chats')
-        .doc(widget.chatId)
-        .collection('messages')
-        .orderBy('createdAt');
+    final messagesStream = _chatService.getMessages(widget.chatId);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.receiverName),
         actions: [
           IconButton(
-            icon: const Icon(Icons.smart_toy),
+            icon: const Icon(Icons.auto_awesome),
             onPressed: openAiPlaceholder,
           ),
         ],
@@ -128,20 +120,24 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: messagesRef.snapshots(),
+              stream: messagesStream,
               builder: (context, snapshot) {
-                if (!snapshot.hasData) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text('Start conversation...'));
                 }
 
                 final docs = snapshot.data!.docs;
 
-                if (docs.isEmpty) {
-                  return const Center(child: Text('Start conversation...'));
-                }
-
                 return ListView.builder(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   itemCount: docs.length,
                   itemBuilder: (context, index) {
                     final data = docs[index].data() as Map<String, dynamic>;
@@ -165,6 +161,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                         hintText: 'Type message...',
                         border: OutlineInputBorder(),
                       ),
+                      minLines: 1,
+                      maxLines: 4,
                     ),
                   ),
 
@@ -172,7 +170,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
                   IconButton(
                     icon: isSending
-                        ? const CircularProgressIndicator()
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
                         : const Icon(Icons.send),
                     onPressed: isSending ? null : sendMessage,
                   ),

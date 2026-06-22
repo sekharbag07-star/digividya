@@ -34,8 +34,12 @@ class AssignedTeacherChatScreen extends StatelessWidget {
       body: FutureBuilder<DocumentSnapshot?>(
         future: getStudentRecord(currentUser.uid),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
           }
 
           if (snapshot.data == null) {
@@ -46,35 +50,77 @@ class AssignedTeacherChatScreen extends StatelessWidget {
 
           final student = snapshot.data!.data() as Map<String, dynamic>;
 
-          final teacherId = student['assignedTeacherId'] ?? '';
+          final teacherId = (student['assignedTeacherId'] ?? '').toString();
 
-          final teacherName = student['assignedTeacherName'] ?? '';
+          final teacherName = (student['assignedTeacherName'] ?? '').toString();
 
-          if (teacherId.toString().isEmpty) {
+          final studentName = (student['name'] ?? 'Student').toString();
+
+          final batchName = (student['batchName'] ?? 'Not Assigned').toString();
+
+          if (teacherId.isEmpty) {
             return const Center(child: Text('No teacher assigned yet'));
           }
 
           final chatId = '${currentUser.uid}_$teacherId';
 
-          return Center(
-            child: ElevatedButton.icon(
-              icon: const Icon(Icons.chat),
-              label: Text('Open Chat With $teacherName'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ChatDetailScreen(
-                      chatId: chatId,
-                      currentUserId: currentUser.uid,
-                      currentUserRole: 'parent',
-                      receiverId: teacherId,
-                      receiverName: teacherName,
-                      chatType: 'assigned_teacher',
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CircleAvatar(
+                      radius: 35,
+                      child: Icon(Icons.school, size: 35),
                     ),
-                  ),
-                );
-              },
+
+                    const SizedBox(height: 16),
+
+                    Text(
+                      teacherName,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    Text('Student: $studentName'),
+
+                    Text('Batch: $batchName'),
+
+                    const SizedBox(height: 24),
+
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.chat),
+                        label: const Text('Open Chat'),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ChatDetailScreen(
+                                chatId: chatId,
+                                currentUserId: currentUser.uid,
+                                currentUserRole: 'parent',
+                                receiverId: teacherId,
+                                receiverName: teacherName,
+                                chatType: 'assigned_teacher',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           );
         },
