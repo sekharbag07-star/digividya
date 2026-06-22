@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:digividya/features/auth/services/account_service.dart';
 import 'package:digividya/features/auth/services/auth_service.dart';
@@ -14,23 +15,54 @@ class ParentRegisterScreen extends StatefulWidget {
 
 class _ParentRegisterScreenState extends State<ParentRegisterScreen> {
   final fullNameController = TextEditingController();
-
   final phoneController = TextEditingController();
-
   final emailController = TextEditingController();
-
   final passwordController = TextEditingController();
-
   final confirmPasswordController = TextEditingController();
 
   final AccountService _accountService = AccountService();
-
   final AuthService _authService = AuthService();
 
   bool isLoading = false;
 
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
+
+  Future<void> linkParentToStudent({
+    required String parentUid,
+    required String parentEmail,
+    required String parentPhone,
+  }) async {
+    final firestore = FirebaseFirestore.instance;
+
+    final students = await firestore
+        .collection('students')
+        .where('parentEmail', isEqualTo: parentEmail)
+        .limit(1)
+        .get();
+
+    if (students.docs.isNotEmpty) {
+      await students.docs.first.reference.update({
+        'parentUid': parentUid,
+        'updatedAt': Timestamp.now(),
+      });
+
+      return;
+    }
+
+    final studentsByPhone = await firestore
+        .collection('students')
+        .where('parentPhone', isEqualTo: parentPhone)
+        .limit(1)
+        .get();
+
+    if (studentsByPhone.docs.isNotEmpty) {
+      await studentsByPhone.docs.first.reference.update({
+        'parentUid': parentUid,
+        'updatedAt': Timestamp.now(),
+      });
+    }
+  }
 
   Future<void> registerParent() async {
     if (fullNameController.text.trim().isEmpty ||
@@ -90,6 +122,16 @@ class _ParentRegisterScreenState extends State<ParentRegisterScreen> {
         fullName: fullNameController.text.trim(),
         phoneNumber: phoneController.text.trim(),
         email: emailController.text.trim(),
+      );
+
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        'preferredLanguage': 'en',
+      }, SetOptions(merge: true));
+
+      await linkParentToStudent(
+        parentUid: user.uid,
+        parentEmail: emailController.text.trim(),
+        parentPhone: phoneController.text.trim(),
       );
 
       await _authService.logout();

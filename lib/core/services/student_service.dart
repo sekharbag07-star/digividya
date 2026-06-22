@@ -28,6 +28,7 @@ class StudentService {
       'phone': phone,
 
       // Parent
+      'parentUid': '',
       'parentName': parentName,
       'parentPhone': parentPhone,
       'parentEmail': parentEmail,
@@ -36,15 +37,12 @@ class StudentService {
       'batchId': '',
       'batchName': 'Not Assigned',
 
-      // Assigned Teacher
+      // Teacher Assignment
       'assignedTeacherId': '',
       'assignedTeacherName': '',
 
-      // Language
+      // AI Language
       'preferredLanguage': 'en',
-
-      // AI
-      'aiEnabled': true,
 
       // Profile
       'photoUrl': '',
@@ -116,16 +114,6 @@ class StudentService {
       'assignedTeacherId': teacherId,
       'assignedTeacherName': teacherName,
 
-      'updatedAt': Timestamp.now(),
-    });
-  }
-
-  Future<void> updatePreferredLanguage({
-    required String studentId,
-    required String languageCode,
-  }) async {
-    await _firestore.collection('students').doc(studentId).update({
-      'preferredLanguage': languageCode,
       'updatedAt': Timestamp.now(),
     });
   }

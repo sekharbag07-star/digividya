@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:digividya/features/parent/chat/screens/teacher_selection_screen.dart';
 import 'package:digividya/features/support/screens/support_chat_screen.dart';
 import 'package:digividya/features/chat/screens/ai_chat_screen.dart';
+import 'package:digividya/features/parent/chat/screens/assigned_teacher_chat_screen.dart';
 
 class ParentChatScreen extends StatelessWidget {
   const ParentChatScreen({super.key});
@@ -61,7 +62,12 @@ class ParentChatScreen extends StatelessWidget {
               subtitle: 'Chat with assigned teacher',
               icon: Icons.school,
               onTap: () {
-                comingSoon(context, 'Assigned Teacher Chat');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const AssignedTeacherChatScreen(),
+                  ),
+                );
               },
             ),
 

@@ -93,7 +93,37 @@ class StudentProfileScreen extends StatelessWidget {
                     subtitle: Text(student['batchName'] ?? 'Not Assigned'),
                   ),
                 ),
+                Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.school),
+                    title: const Text("Assigned Teacher"),
+                    subtitle: Text(
+                      (student['assignedTeacherName'] ?? '').toString().isEmpty
+                          ? 'Not Assigned'
+                          : student['assignedTeacherName'],
+                    ),
+                  ),
+                ),
 
+                Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.link),
+                    title: const Text("Parent Link Status"),
+                    subtitle: Text(
+                      (student['parentUid'] ?? '').toString().isEmpty
+                          ? 'Not Linked'
+                          : 'Linked',
+                    ),
+                  ),
+                ),
+
+                Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.language),
+                    title: const Text("Preferred Language"),
+                    subtitle: Text(student['preferredLanguage'] ?? 'en'),
+                  ),
+                ),
                 const SizedBox(height: 20),
 
                 const Text(
@@ -237,10 +267,3 @@ class StudentProfileScreen extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
