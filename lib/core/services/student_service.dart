@@ -36,6 +36,16 @@ class StudentService {
       'batchId': '',
       'batchName': 'Not Assigned',
 
+      // Assigned Teacher
+      'assignedTeacherId': '',
+      'assignedTeacherName': '',
+
+      // Language
+      'preferredLanguage': 'en',
+
+      // AI
+      'aiEnabled': true,
+
       // Profile
       'photoUrl': '',
 
@@ -96,10 +106,26 @@ class StudentService {
     required String studentId,
     required String batchId,
     required String batchName,
+    required String teacherId,
+    required String teacherName,
   }) async {
     await _firestore.collection('students').doc(studentId).update({
       'batchId': batchId,
       'batchName': batchName,
+
+      'assignedTeacherId': teacherId,
+      'assignedTeacherName': teacherName,
+
+      'updatedAt': Timestamp.now(),
+    });
+  }
+
+  Future<void> updatePreferredLanguage({
+    required String studentId,
+    required String languageCode,
+  }) async {
+    await _firestore.collection('students').doc(studentId).update({
+      'preferredLanguage': languageCode,
       'updatedAt': Timestamp.now(),
     });
   }
@@ -108,10 +134,3 @@ class StudentService {
     await _firestore.collection('students').doc(docId).delete();
   }
 }
-
-
-
-
-
-
-

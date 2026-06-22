@@ -6,7 +6,8 @@ class BatchService {
   Future<void> addBatch({
     required String name,
     required String subject,
-    required String teacher,
+    required String teacherId,
+    required String teacherName,
   }) async {
     final existing = await _firestore
         .collection('batches')
@@ -21,13 +22,18 @@ class BatchService {
     await _firestore.collection('batches').add({
       'name': name.trim(),
       'subject': subject.trim(),
-      'teacher': teacher.trim(),
 
-      // Student assignment support
+      // Teacher Mapping
+      'teacherId': teacherId,
+      'teacherName': teacherName,
+
+      // Student Support
       'studentCount': 0,
 
       'active': true,
+
       'createdAt': Timestamp.now(),
+      'updatedAt': Timestamp.now(),
     });
   }
 
@@ -39,7 +45,6 @@ class BatchService {
   }
 
   Future<void> deleteBatch(String docId) async {
-    // Remove batch from assigned students first
     final students = await _firestore
         .collection('students')
         .where('batchId', isEqualTo: docId)
@@ -51,6 +56,9 @@ class BatchService {
       batch.update(student.reference, {
         'batchId': '',
         'batchName': 'Not Assigned',
+
+        'assignedTeacherId': '',
+        'assignedTeacherName': '',
       });
     }
 
@@ -59,10 +67,3 @@ class BatchService {
     await batch.commit();
   }
 }
-
-
-
-
-
-
-

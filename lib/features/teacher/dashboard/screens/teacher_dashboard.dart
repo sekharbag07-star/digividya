@@ -7,6 +7,7 @@ import 'package:digividya/features/teacher/assignments/screens/teacher_assignmen
 import 'package:digividya/features/teacher/live_classes/screens/teacher_live_class_screen.dart';
 import 'package:digividya/features/teacher/notices/screens/teacher_notice_screen.dart';
 import 'package:digividya/features/teacher/study_material/screens/teacher_study_material_screen.dart';
+import 'package:digividya/features/teacher/chat/screens/teacher_chat_list_screen.dart';
 
 class TeacherDashboard extends StatelessWidget {
   const TeacherDashboard({super.key});
@@ -27,9 +28,7 @@ class TeacherDashboard extends StatelessWidget {
 
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => const LoginScreen(),
-                ),
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
                 (route) => false,
               );
             },
@@ -72,6 +71,12 @@ class TeacherDashboard extends StatelessWidget {
             Icons.menu_book,
             const TeacherStudyMaterialScreen(),
           ),
+          _card(
+            context,
+            "Parent Chat",
+            Icons.chat,
+            const TeacherChatListScreen(),
+          ),
         ],
       ),
     );
@@ -86,31 +91,17 @@ class TeacherDashboard extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => screen),
-          );
+          Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, size: 50),
             const SizedBox(height: 10),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-            ),
+            Text(title, textAlign: TextAlign.center),
           ],
         ),
       ),
     );
   }
 }
-
-
-
-
-
-
-
-

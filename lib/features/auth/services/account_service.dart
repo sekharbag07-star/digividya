@@ -67,6 +67,7 @@ class AccountService {
       // Verification
       'phoneVerified': true,
       'emailVerified': false,
+      'preferredLanguage': 'en',
 
       // Status
       'active': true,
@@ -89,9 +90,8 @@ class AccountService {
       'email': email,
 
       'role': 'parent',
-
       'studentUid': '',
-
+      'preferredLanguage': 'en',
       'active': true,
 
       'createdAt': Timestamp.now(),
