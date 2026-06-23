@@ -1,23 +1,26 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 class GeminiService {
-  static const String apiKey = 'YOUR_API_KEY';
+  static String get apiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
 
-  final GenerativeModel _model = GenerativeModel(
-    model: 'gemini-2.5-flash',
-    apiKey: apiKey,
-  );
+  GenerativeModel get _model =>
+      GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
 
   Future<String> generateResponse({
     required String message,
     required String language,
   }) async {
     try {
+      if (apiKey.isEmpty) {
+        return 'Gemini API key not configured.';
+      }
+
       final prompt =
           '''
 You are DigiVidya AI Assistant.
 
-Reply ONLY in language code: $language.
+Reply in this language: $language
 
 Help students, parents and teachers.
 

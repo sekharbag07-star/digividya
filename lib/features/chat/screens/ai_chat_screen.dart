@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:digividya/core/services/gemini_service.dart';
 
+import '../widgets/ai_message_bubble.dart';
+import '../widgets/ai_welcome_screen.dart';
+import '../widgets/ai_loading_widget.dart';
+import '../widgets/ai_language_selector.dart';
+
 class AiChatScreen extends StatefulWidget {
   const AiChatScreen({super.key});
 
@@ -15,9 +20,9 @@ class _AiChatScreenState extends State<AiChatScreen> {
 
   final List<Map<String, dynamic>> messages = [];
 
-  String selectedLanguage = 'en';
-
   bool isLoading = false;
+
+  String selectedLanguage = 'en';
 
   final Map<String, String> languageNames = {
     'en': 'English',
@@ -37,7 +42,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
   Future<void> sendMessage() async {
     final text = messageController.text.trim();
 
-    if (text.isEmpty) return;
+    if (text.isEmpty || isLoading) return;
 
     setState(() {
       messages.add({'role': 'user', 'message': text});
@@ -50,24 +55,26 @@ class _AiChatScreenState extends State<AiChatScreen> {
     try {
       final aiResponse = await _geminiService.generateResponse(
         message: text,
-        language: languageNames[selectedLanguage] ?? 'English',
+        language: selectedLanguage,
       );
 
       if (!mounted) return;
 
       setState(() {
         messages.add({'role': 'ai', 'message': aiResponse});
-
-        isLoading = false;
       });
     } catch (e) {
       if (!mounted) return;
 
       setState(() {
-        messages.add({'role': 'ai', 'message': 'Error: $e'});
-
-        isLoading = false;
+        messages.add({'role': 'ai', 'message': 'DigiVidya AI Error:\n$e'});
       });
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -75,96 +82,6 @@ class _AiChatScreenState extends State<AiChatScreen> {
   void dispose() {
     messageController.dispose();
     super.dispose();
-  }
-
-  Widget buildMessage(Map<String, dynamic> msg) {
-    final isUser = msg['role'] == 'user';
-
-    return Align(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        padding: const EdgeInsets.all(12),
-        constraints: const BoxConstraints(maxWidth: 320),
-        decoration: BoxDecoration(
-          color: isUser ? Colors.blue.shade100 : Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Text(msg['message'], style: const TextStyle(fontSize: 14)),
-      ),
-    );
-  }
-
-  PopupMenuButton<String> languageSelector() {
-    return PopupMenuButton<String>(
-      icon: const Icon(Icons.language),
-      tooltip: 'Change Language',
-      onSelected: (value) {
-        setState(() {
-          selectedLanguage = value;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Language changed to ${languageNames[value]}'),
-          ),
-        );
-      },
-      itemBuilder: (context) => const [
-        PopupMenuItem(value: 'en', child: Text('English')),
-        PopupMenuItem(value: 'hi', child: Text('हिन्दी')),
-        PopupMenuItem(value: 'bn', child: Text('বাংলা')),
-        PopupMenuItem(value: 'ta', child: Text('தமிழ்')),
-        PopupMenuItem(value: 'te', child: Text('తెలుగు')),
-        PopupMenuItem(value: 'mr', child: Text('मराठी')),
-        PopupMenuItem(value: 'gu', child: Text('ગુજરાતી')),
-        PopupMenuItem(value: 'kn', child: Text('ಕನ್ನಡ')),
-        PopupMenuItem(value: 'ml', child: Text('മലയാളം')),
-        PopupMenuItem(value: 'pa', child: Text('ਪੰਜਾਬੀ')),
-        PopupMenuItem(value: 'ur', child: Text('اردو')),
-        PopupMenuItem(value: 'or', child: Text('ଓଡ଼ିଆ')),
-      ],
-    );
-  }
-
-  Widget buildWelcomeScreen() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/logo/digividya_logo.png',
-              height: 80,
-              errorBuilder: (context, error, stackTrace) {
-                return const Icon(Icons.school, size: 80);
-              },
-            ),
-
-            const SizedBox(height: 20),
-
-            const Text(
-              'Welcome to DigiVidya AI',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: 10),
-
-            const Text(
-              'Homework Help\n'
-              'Exam Preparation\n'
-              'Attendance Queries\n'
-              'Fee Queries\n'
-              'Notice Summary\n'
-              'Parent Guidance\n'
-              'Teacher Assistant',
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   @override
@@ -184,9 +101,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                 },
               ),
             ),
-
             const SizedBox(width: 10),
-
             const Expanded(child: Text('DigiVidya AI')),
           ],
         ),
@@ -200,7 +115,19 @@ class _AiChatScreenState extends State<AiChatScreen> {
               ),
             ),
           ),
-          languageSelector(),
+          AiLanguageSelector(
+            onSelected: (value) {
+              setState(() {
+                selectedLanguage = value;
+              });
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Language changed to ${languageNames[value]}'),
+                ),
+              );
+            },
+          ),
         ],
       ),
       body: Column(
@@ -218,21 +145,22 @@ class _AiChatScreenState extends State<AiChatScreen> {
 
           Expanded(
             child: messages.isEmpty
-                ? buildWelcomeScreen()
+                ? const AiWelcomeScreen()
                 : ListView.builder(
                     padding: const EdgeInsets.all(8),
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
-                      return buildMessage(messages[index]);
+                      final msg = messages[index];
+
+                      return AiMessageBubble(
+                        message: msg['message'],
+                        isUser: msg['role'] == 'user',
+                      );
                     },
                   ),
           ),
 
-          if (isLoading)
-            const Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: CircularProgressIndicator(),
-            ),
+          if (isLoading) const AiLoadingWidget(),
 
           SafeArea(
             child: Padding(
