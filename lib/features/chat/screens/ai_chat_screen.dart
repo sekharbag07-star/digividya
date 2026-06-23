@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:digividya/core/services/gemini_service.dart';
 
 class AiChatScreen extends StatefulWidget {
   const AiChatScreen({super.key});
@@ -8,11 +9,15 @@ class AiChatScreen extends StatefulWidget {
 }
 
 class _AiChatScreenState extends State<AiChatScreen> {
+  final GeminiService _geminiService = GeminiService();
+
   final TextEditingController messageController = TextEditingController();
 
   final List<Map<String, dynamic>> messages = [];
 
   String selectedLanguage = 'en';
+
+  bool isLoading = false;
 
   final Map<String, String> languageNames = {
     'en': 'English',
@@ -29,7 +34,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
     'or': 'ଓଡ଼ିଆ',
   };
 
-  void sendMessage() {
+  Future<void> sendMessage() async {
     final text = messageController.text.trim();
 
     if (text.isEmpty) return;
@@ -37,14 +42,33 @@ class _AiChatScreenState extends State<AiChatScreen> {
     setState(() {
       messages.add({'role': 'user', 'message': text});
 
-      messages.add({
-        'role': 'ai',
-        'message':
-            'DigiVidya AI is under development.\n\nSelected Language: ${languageNames[selectedLanguage]}\n\nGemini/OpenAI integration will be connected in next phase.',
-      });
+      isLoading = true;
     });
 
     messageController.clear();
+
+    try {
+      final aiResponse = await _geminiService.generateResponse(
+        message: text,
+        language: languageNames[selectedLanguage] ?? 'English',
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        messages.add({'role': 'ai', 'message': aiResponse});
+
+        isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        messages.add({'role': 'ai', 'message': 'Error: $e'});
+
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -103,6 +127,46 @@ class _AiChatScreenState extends State<AiChatScreen> {
     );
   }
 
+  Widget buildWelcomeScreen() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/logo/digividya_logo.png',
+              height: 80,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.school, size: 80);
+              },
+            ),
+
+            const SizedBox(height: 20),
+
+            const Text(
+              'Welcome to DigiVidya AI',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 10),
+
+            const Text(
+              'Homework Help\n'
+              'Exam Preparation\n'
+              'Attendance Queries\n'
+              'Fee Queries\n'
+              'Notice Summary\n'
+              'Parent Guidance\n'
+              'Teacher Assistant',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,7 +184,9 @@ class _AiChatScreenState extends State<AiChatScreen> {
                 },
               ),
             ),
+
             const SizedBox(width: 10),
+
             const Expanded(child: Text('DigiVidya AI')),
           ],
         ),
@@ -152,43 +218,21 @@ class _AiChatScreenState extends State<AiChatScreen> {
 
           Expanded(
             child: messages.isEmpty
-                ? Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/logo/digividya_logo.png',
-                            height: 80,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Icon(Icons.school, size: 80);
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          const Text(
-                            'Welcome to DigiVidya AI',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            'Homework Help\nExam Preparation\nAttendance Queries\nFee Queries\nNotice Summary\nParent Guidance\nTeacher Assistant',
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
+                ? buildWelcomeScreen()
                 : ListView.builder(
+                    padding: const EdgeInsets.all(8),
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
                       return buildMessage(messages[index]);
                     },
                   ),
           ),
+
+          if (isLoading)
+            const Padding(
+              padding: EdgeInsets.only(bottom: 10),
+              child: CircularProgressIndicator(),
+            ),
 
           SafeArea(
             child: Padding(
@@ -210,7 +254,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
 
                   IconButton(
                     icon: const Icon(Icons.send),
-                    onPressed: sendMessage,
+                    onPressed: isLoading ? null : sendMessage,
                   ),
                 ],
               ),
