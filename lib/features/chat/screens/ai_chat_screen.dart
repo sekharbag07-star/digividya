@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:digividya/features/chat/actions/ai_chat_actions.dart';
 import 'package:digividya/features/chat/controllers/ai_chat_controller.dart';
 import 'package:digividya/features/chat/models/ai_chat_message.dart';
+import 'package:digividya/features/chat/search/ai_chat_search_delegate.dart';
 
 import 'package:digividya/features/chat/widgets/layout/ai_chat_body.dart';
 import 'package:digividya/features/chat/widgets/layout/ai_chat_header.dart';
@@ -69,6 +70,13 @@ class _AiChatScreenState extends State<AiChatScreen> {
     }
   }
 
+  void _openSearch() {
+    showSearch(
+      context: context,
+      delegate: AiChatSearchDelegate(messages: currentMessages),
+    );
+  }
+
   @override
   void dispose() {
     messageController.dispose();
@@ -90,18 +98,25 @@ class _AiChatScreenState extends State<AiChatScreen> {
           appBar: AiChatHeader(
             selectedLanguage: selectedLanguage,
             role: _controller.userRole,
+
             onLanguageChanged: (value) {
               setState(() {
                 selectedLanguage = value;
               });
             },
+
+            onSearch: _openSearch,
+
             onClearChat: () => AiChatActions.clearChat(
               context: context,
               controller: _controller,
             ),
+
             onExportPdf: () => AiChatActions.exportPdf(currentMessages),
+
             onExportWord: () => AiChatActions.exportWord(currentMessages),
           ),
+
           body: AiChatBody(
             controller: _controller,
             messageController: messageController,

@@ -6,14 +6,20 @@ class AiMessageBubble extends StatelessWidget {
   final bool isUser;
 
   final DateTime? createdAt;
+
+  final bool isFavorite;
+
   final VoidCallback? onRegenerate;
+  final VoidCallback? onFavoriteToggle;
 
   const AiMessageBubble({
     super.key,
     required this.message,
     required this.isUser,
     this.createdAt,
+    this.isFavorite = false,
     this.onRegenerate,
+    this.onFavoriteToggle,
   });
 
   Future<void> _copyMessage(BuildContext context) async {
@@ -96,6 +102,16 @@ class AiMessageBubble extends StatelessWidget {
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            GestureDetector(
+                              onTap: onFavoriteToggle,
+                              child: Icon(
+                                isFavorite ? Icons.star : Icons.star_border,
+                                size: 16,
+                              ),
+                            ),
+
+                            const SizedBox(width: 8),
+
                             Icon(
                               Icons.copy_outlined,
                               size: 14,

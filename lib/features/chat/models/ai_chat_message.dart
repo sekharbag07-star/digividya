@@ -6,9 +6,10 @@ class AiChatMessage {
   final String message;
   final Timestamp createdAt;
 
-  // Future features:
-  // regenerate, analytics, message linking
   final String? parentMessageId;
+
+  // Favorites Support
+  final bool isFavorite;
 
   const AiChatMessage({
     required this.id,
@@ -16,6 +17,7 @@ class AiChatMessage {
     required this.message,
     required this.createdAt,
     this.parentMessageId,
+    this.isFavorite = false,
   });
 
   factory AiChatMessage.fromFirestore(DocumentSnapshot doc) {
@@ -27,6 +29,7 @@ class AiChatMessage {
       message: data['message'] ?? '',
       createdAt: data['createdAt'] ?? Timestamp.now(),
       parentMessageId: data['parentMessageId'],
+      isFavorite: data['isFavorite'] ?? false,
     );
   }
 
@@ -36,6 +39,7 @@ class AiChatMessage {
       'message': message,
       'createdAt': createdAt,
       'parentMessageId': parentMessageId,
+      'isFavorite': isFavorite,
     };
   }
 
@@ -45,6 +49,7 @@ class AiChatMessage {
     String? message,
     Timestamp? createdAt,
     String? parentMessageId,
+    bool? isFavorite,
   }) {
     return AiChatMessage(
       id: id ?? this.id,
@@ -52,6 +57,7 @@ class AiChatMessage {
       message: message ?? this.message,
       createdAt: createdAt ?? this.createdAt,
       parentMessageId: parentMessageId ?? this.parentMessageId,
+      isFavorite: isFavorite ?? this.isFavorite,
     );
   }
 }

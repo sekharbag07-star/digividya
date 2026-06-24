@@ -33,6 +33,21 @@ class _AiChatStreamState extends State<AiChatStream> {
     });
   }
 
+  Future<void> _toggleFavorite(AiChatMessage message) async {
+    try {
+      await widget.controller.toggleFavorite(
+        messageId: message.id,
+        isFavorite: !message.isFavorite,
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Favorite update failed: $e')));
+    }
+  }
+
   Future<void> _regenerateMessage(AiChatMessage aiMessage) async {
     if (_isRegenerating) {
       return;
@@ -122,6 +137,8 @@ class _AiChatStreamState extends State<AiChatStream> {
               message: msg.message,
               isUser: msg.role == 'user',
               createdAt: msg.createdAt.toDate(),
+              isFavorite: msg.isFavorite,
+              onFavoriteToggle: () => _toggleFavorite(msg),
               onRegenerate: msg.role == 'ai'
                   ? () => _regenerateMessage(msg)
                   : null,

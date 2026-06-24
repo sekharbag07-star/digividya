@@ -9,6 +9,7 @@ class AiChatHeader extends StatelessWidget implements PreferredSizeWidget {
 
   final Function(String) onLanguageChanged;
 
+  final VoidCallback? onSearch;
   final VoidCallback? onClearChat;
   final VoidCallback? onExportPdf;
   final VoidCallback? onExportWord;
@@ -18,6 +19,7 @@ class AiChatHeader extends StatelessWidget implements PreferredSizeWidget {
     required this.selectedLanguage,
     required this.role,
     required this.onLanguageChanged,
+    this.onSearch,
     this.onClearChat,
     this.onExportPdf,
     this.onExportWord,
@@ -42,13 +44,10 @@ class AiChatHeader extends StatelessWidget implements PreferredSizeWidget {
               },
             ),
           ),
-
           const SizedBox(width: 10),
-
           const Expanded(child: Text('DigiVidya AI')),
         ],
       ),
-
       actions: [
         Center(
           child: Container(
@@ -76,6 +75,12 @@ class AiChatHeader extends StatelessWidget implements PreferredSizeWidget {
         ),
 
         AiLanguageSelector(onSelected: onLanguageChanged),
+
+        IconButton(
+          icon: const Icon(Icons.search),
+          tooltip: 'Search Chat',
+          onPressed: onSearch,
+        ),
 
         PopupMenuButton<String>(
           icon: const Icon(Icons.more_vert),
@@ -105,7 +110,6 @@ class AiChatHeader extends StatelessWidget implements PreferredSizeWidget {
                 ],
               ),
             ),
-
             const PopupMenuItem(
               value: 'word',
               child: Row(
@@ -116,9 +120,7 @@ class AiChatHeader extends StatelessWidget implements PreferredSizeWidget {
                 ],
               ),
             ),
-
             const PopupMenuDivider(),
-
             const PopupMenuItem(
               value: 'clear',
               child: Row(

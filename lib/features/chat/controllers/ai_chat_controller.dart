@@ -45,6 +45,14 @@ class AiChatController {
     return _chatService.getMessages(userId);
   }
 
+  Stream<List<AiChatMessage>> getFavoriteMessages() {
+    if (userId.isEmpty) {
+      return const Stream.empty();
+    }
+
+    return _chatService.getFavoriteMessages(userId);
+  }
+
   Future<String> sendMessage({
     required String message,
     required String language,
@@ -73,6 +81,17 @@ class AiChatController {
 
   Future<AiChatMessage?> getMessageById(String messageId) {
     return _chatService.getMessageById(userId: userId, messageId: messageId);
+  }
+
+  Future<void> toggleFavorite({
+    required String messageId,
+    required bool isFavorite,
+  }) {
+    return _chatService.toggleFavorite(
+      userId: userId,
+      messageId: messageId,
+      isFavorite: isFavorite,
+    );
   }
 
   Future<void> clearChat() {

@@ -20,6 +20,7 @@ class AiChatService {
       'message': message,
       'createdAt': Timestamp.now(),
       'parentMessageId': parentMessageId,
+      'isFavorite': false,
     });
 
     return doc.id;
@@ -55,6 +56,28 @@ class AiChatService {
     }
 
     return AiChatMessage.fromFirestore(doc);
+  }
+
+  Future<void> toggleFavorite({
+    required String userId,
+    required String messageId,
+    required bool isFavorite,
+  }) async {
+    await _messagesRef(
+      userId,
+    ).doc(messageId).update({'isFavorite': isFavorite});
+  }
+
+  Stream<List<AiChatMessage>> getFavoriteMessages(String userId) {
+    return _messagesRef(userId)
+        .where('isFavorite', isEqualTo: true)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => AiChatMessage.fromFirestore(doc))
+              .toList(),
+        );
   }
 
   Future<String> getConversationHistory({
