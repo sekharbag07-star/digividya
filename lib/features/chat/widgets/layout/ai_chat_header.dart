@@ -8,7 +8,10 @@ class AiChatHeader extends StatelessWidget implements PreferredSizeWidget {
   final String role;
 
   final Function(String) onLanguageChanged;
+
   final VoidCallback? onClearChat;
+  final VoidCallback? onExportPdf;
+  final VoidCallback? onExportWord;
 
   const AiChatHeader({
     super.key,
@@ -16,6 +19,8 @@ class AiChatHeader extends StatelessWidget implements PreferredSizeWidget {
     required this.role,
     required this.onLanguageChanged,
     this.onClearChat,
+    this.onExportPdf,
+    this.onExportWord,
   });
 
   @override
@@ -37,10 +42,13 @@ class AiChatHeader extends StatelessWidget implements PreferredSizeWidget {
               },
             ),
           ),
+
           const SizedBox(width: 10),
+
           const Expanded(child: Text('DigiVidya AI')),
         ],
       ),
+
       actions: [
         Center(
           child: Container(
@@ -65,6 +73,18 @@ class AiChatHeader extends StatelessWidget implements PreferredSizeWidget {
               style: const TextStyle(fontSize: 12),
             ),
           ),
+        ),
+
+        IconButton(
+          icon: const Icon(Icons.picture_as_pdf),
+          tooltip: 'Export PDF',
+          onPressed: onExportPdf,
+        ),
+
+        IconButton(
+          icon: const Icon(Icons.description),
+          tooltip: 'Export Word',
+          onPressed: onExportWord,
         ),
 
         IconButton(

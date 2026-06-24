@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'package:digividya/features/chat/actions/ai_chat_actions.dart';
 import 'package:digividya/features/chat/controllers/ai_chat_controller.dart';
+import 'package:digividya/features/chat/models/ai_chat_message.dart';
+
+import 'package:digividya/features/chat/widgets/common/ai_loading_widget.dart';
+import 'package:digividya/features/chat/widgets/input/ai_chat_input.dart';
 import 'package:digividya/features/chat/widgets/layout/ai_chat_header.dart';
 import 'package:digividya/features/chat/widgets/layout/ai_chat_stream.dart';
-import 'package:digividya/features/chat/widgets/input/ai_chat_input.dart';
-import 'package:digividya/features/chat/widgets/common/ai_loading_widget.dart';
 
 class AiChatScreen extends StatefulWidget {
   const AiChatScreen({super.key});
@@ -21,6 +24,8 @@ class _AiChatScreenState extends State<AiChatScreen> {
   bool isLoading = false;
 
   String selectedLanguage = 'en';
+
+  List<AiChatMessage> currentMessages = [];
 
   @override
   void initState() {
@@ -64,16 +69,6 @@ class _AiChatScreenState extends State<AiChatScreen> {
     }
   }
 
-  Future<void> clearChat() async {
-    await _controller.clearChat();
-
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Chat cleared successfully')));
-  }
-
   @override
   void dispose() {
     messageController.dispose();
@@ -86,30 +81,42 @@ class _AiChatScreenState extends State<AiChatScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    return Scaffold(
-      appBar: AiChatHeader(
-        selectedLanguage: selectedLanguage,
-        role: _controller.userRole,
-        onLanguageChanged: (value) {
-          setState(() {
-            selectedLanguage = value;
-          });
-        },
-        onClearChat: clearChat,
-      ),
-      body: Column(
-        children: [
-          Expanded(child: AiChatStream(controller: _controller)),
+    return StreamBuilder<List<AiChatMessage>>(
+      stream: _controller.getMessages(),
+      builder: (context, snapshot) {
+        currentMessages = snapshot.data ?? [];
 
-          if (isLoading) const AiLoadingWidget(),
-
-          AiChatInput(
-            controller: messageController,
-            isLoading: isLoading,
-            onSend: sendMessage,
+        return Scaffold(
+          appBar: AiChatHeader(
+            selectedLanguage: selectedLanguage,
+            role: _controller.userRole,
+            onLanguageChanged: (value) {
+              setState(() {
+                selectedLanguage = value;
+              });
+            },
+            onClearChat: () => AiChatActions.clearChat(
+              context: context,
+              controller: _controller,
+            ),
+            onExportPdf: () => AiChatActions.exportPdf(currentMessages),
+            onExportWord: () => AiChatActions.exportWord(currentMessages),
           ),
-        ],
-      ),
+          body: Column(
+            children: [
+              Expanded(child: AiChatStream(controller: _controller)),
+
+              if (isLoading) const AiLoadingWidget(),
+
+              AiChatInput(
+                controller: messageController,
+                isLoading: isLoading,
+                onSend: sendMessage,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

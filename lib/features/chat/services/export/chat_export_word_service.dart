@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -9,16 +10,24 @@ class ChatExportWordService {
   static Future<void> export(List<AiChatMessage> messages) async {
     final buffer = StringBuffer();
 
-    buffer.writeln('DigiVidya AI Chat Export');
+    final exportDate = DateFormat('dd MMM yyyy hh:mm a').format(DateTime.now());
+
+    buffer.writeln('DIGIVIDYA AI CHAT EXPORT');
     buffer.writeln('');
-    buffer.writeln('Generated: ${DateTime.now()}');
+    buffer.writeln('Generated: $exportDate');
     buffer.writeln('');
-    buffer.writeln('====================================');
+    buffer.writeln('================================================');
     buffer.writeln('');
 
     for (final msg in messages) {
       buffer.writeln('[${msg.role.toUpperCase()}]');
+
       buffer.writeln(msg.message);
+
+      buffer.writeln('');
+
+      buffer.writeln('------------------------------------------------');
+
       buffer.writeln('');
     }
 
