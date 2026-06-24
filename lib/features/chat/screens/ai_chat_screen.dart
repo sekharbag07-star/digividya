@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../controllers/ai_chat_controller.dart';
-import '../widgets/ai_language_selector.dart';
-import '../widgets/ai_loading_widget.dart';
-import '../widgets/ai_message_bubble.dart';
-import '../widgets/ai_welcome_screen.dart';
+import 'package:digividya/features/chat/widgets/layout/ai_chat_header.dart';
+import 'package:digividya/features/chat/widgets/layout/ai_chat_stream.dart';
+import 'package:digividya/features/chat/widgets/input/ai_chat_input.dart';
+import 'package:digividya/features/chat/widgets/common/ai_loading_widget.dart';
 
 class AiChatScreen extends StatefulWidget {
   const AiChatScreen({super.key});
@@ -18,26 +18,9 @@ class _AiChatScreenState extends State<AiChatScreen> {
 
   final TextEditingController messageController = TextEditingController();
 
-  final List<Map<String, dynamic>> messages = [];
-
   bool isLoading = false;
 
   String selectedLanguage = 'en';
-
-  final Map<String, String> languageNames = {
-    'en': 'English',
-    'hi': 'हिन्दी',
-    'bn': 'বাংলা',
-    'ta': 'தமிழ்',
-    'te': 'తెలుగు',
-    'mr': 'मराठी',
-    'gu': 'ગુજરાતી',
-    'kn': 'ಕನ್ನಡ',
-    'ml': 'മലയാളം',
-    'pa': 'ਪੰਜਾਬੀ',
-    'ur': 'اردو',
-    'or': 'ଓଡ଼ିଆ',
-  };
 
   @override
   void initState() {
@@ -51,30 +34,19 @@ class _AiChatScreenState extends State<AiChatScreen> {
     if (text.isEmpty || isLoading) return;
 
     setState(() {
-      messages.add({'role': 'user', 'message': text});
-
       isLoading = true;
     });
 
     messageController.clear();
 
     try {
-      final aiResponse = await _controller.sendMessage(
-        message: text,
-        language: selectedLanguage,
-      );
-
-      if (!mounted) return;
-
-      setState(() {
-        messages.add({'role': 'ai', 'message': aiResponse});
-      });
+      await _controller.sendMessage(message: text, language: selectedLanguage);
     } catch (e) {
       if (!mounted) return;
 
-      setState(() {
-        messages.add({'role': 'ai', 'message': 'DigiVidya AI Error:\n$e'});
-      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('DigiVidya AI Error:\n$e')));
     } finally {
       if (mounted) {
         setState(() {
@@ -93,101 +65,24 @@ class _AiChatScreenState extends State<AiChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: Image.asset(
-                'assets/logo/digividya_logo.png',
-                height: 30,
-                width: 30,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(Icons.school, size: 28);
-                },
-              ),
-            ),
-            const SizedBox(width: 10),
-            const Expanded(child: Text('DigiVidya AI')),
-          ],
-        ),
-        actions: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 4),
-              child: Text(
-                languageNames[selectedLanguage] ?? 'English',
-                style: const TextStyle(fontSize: 12),
-              ),
-            ),
-          ),
-          AiLanguageSelector(
-            onSelected: (value) {
-              setState(() {
-                selectedLanguage = value;
-              });
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Language changed to ${languageNames[value]}'),
-                ),
-              );
-            },
-          ),
-        ],
+      appBar: AiChatHeader(
+        selectedLanguage: selectedLanguage,
+        onLanguageChanged: (value) {
+          setState(() {
+            selectedLanguage = value;
+          });
+        },
       ),
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(10),
-            color: Colors.blue.shade50,
-            child: Text(
-              'Current Language: ${languageNames[selectedLanguage]}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ),
-          Expanded(
-            child: messages.isEmpty
-                ? const AiWelcomeScreen()
-                : ListView.builder(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      final msg = messages[index];
+          Expanded(child: AiChatStream(controller: _controller)),
 
-                      return AiMessageBubble(
-                        message: msg['message'],
-                        isUser: msg['role'] == 'user',
-                      );
-                    },
-                  ),
-          ),
           if (isLoading) const AiLoadingWidget(),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: messageController,
-                      decoration: const InputDecoration(
-                        hintText: 'Ask DigiVidya AI...',
-                        border: OutlineInputBorder(),
-                      ),
-                      onSubmitted: (_) => sendMessage(),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: isLoading ? null : sendMessage,
-                  ),
-                ],
-              ),
-            ),
+
+          AiChatInput(
+            controller: messageController,
+            isLoading: isLoading,
+            onSend: sendMessage,
           ),
         ],
       ),

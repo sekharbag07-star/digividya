@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../models/ai_chat_message.dart';
+import 'package:digividya/features/chat/models/ai_chat_message.dart';
 
 class ChatExportWordService {
   static Future<void> export(List<AiChatMessage> messages) async {
