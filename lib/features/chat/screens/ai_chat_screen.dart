@@ -4,10 +4,8 @@ import 'package:digividya/features/chat/actions/ai_chat_actions.dart';
 import 'package:digividya/features/chat/controllers/ai_chat_controller.dart';
 import 'package:digividya/features/chat/models/ai_chat_message.dart';
 
-import 'package:digividya/features/chat/widgets/common/ai_loading_widget.dart';
-import 'package:digividya/features/chat/widgets/input/ai_chat_input.dart';
+import 'package:digividya/features/chat/widgets/layout/ai_chat_body.dart';
 import 'package:digividya/features/chat/widgets/layout/ai_chat_header.dart';
-import 'package:digividya/features/chat/widgets/layout/ai_chat_stream.dart';
 
 class AiChatScreen extends StatefulWidget {
   const AiChatScreen({super.key});
@@ -44,7 +42,9 @@ class _AiChatScreenState extends State<AiChatScreen> {
   Future<void> sendMessage() async {
     final text = messageController.text.trim();
 
-    if (text.isEmpty || isLoading) return;
+    if (text.isEmpty || isLoading) {
+      return;
+    }
 
     setState(() {
       isLoading = true;
@@ -102,18 +102,11 @@ class _AiChatScreenState extends State<AiChatScreen> {
             onExportPdf: () => AiChatActions.exportPdf(currentMessages),
             onExportWord: () => AiChatActions.exportWord(currentMessages),
           ),
-          body: Column(
-            children: [
-              Expanded(child: AiChatStream(controller: _controller)),
-
-              if (isLoading) const AiLoadingWidget(),
-
-              AiChatInput(
-                controller: messageController,
-                isLoading: isLoading,
-                onSend: sendMessage,
-              ),
-            ],
+          body: AiChatBody(
+            controller: _controller,
+            messageController: messageController,
+            isLoading: isLoading,
+            onSend: sendMessage,
           ),
         );
       },
