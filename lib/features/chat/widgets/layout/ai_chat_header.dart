@@ -75,25 +75,62 @@ class AiChatHeader extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
 
-        IconButton(
-          icon: const Icon(Icons.picture_as_pdf),
-          tooltip: 'Export PDF',
-          onPressed: onExportPdf,
-        ),
-
-        IconButton(
-          icon: const Icon(Icons.description),
-          tooltip: 'Export Word',
-          onPressed: onExportWord,
-        ),
-
-        IconButton(
-          icon: const Icon(Icons.delete_outline),
-          tooltip: 'Clear Chat',
-          onPressed: onClearChat,
-        ),
-
         AiLanguageSelector(onSelected: onLanguageChanged),
+
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.more_vert),
+          onSelected: (value) {
+            switch (value) {
+              case 'pdf':
+                onExportPdf?.call();
+                break;
+
+              case 'word':
+                onExportWord?.call();
+                break;
+
+              case 'clear':
+                onClearChat?.call();
+                break;
+            }
+          },
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'pdf',
+              child: Row(
+                children: [
+                  Icon(Icons.picture_as_pdf),
+                  SizedBox(width: 8),
+                  Text('Export PDF'),
+                ],
+              ),
+            ),
+
+            const PopupMenuItem(
+              value: 'word',
+              child: Row(
+                children: [
+                  Icon(Icons.description),
+                  SizedBox(width: 8),
+                  Text('Export Word'),
+                ],
+              ),
+            ),
+
+            const PopupMenuDivider(),
+
+            const PopupMenuItem(
+              value: 'clear',
+              child: Row(
+                children: [
+                  Icon(Icons.delete_outline),
+                  SizedBox(width: 8),
+                  Text('Clear Chat'),
+                ],
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
