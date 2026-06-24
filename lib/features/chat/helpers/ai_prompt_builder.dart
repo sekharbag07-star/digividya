@@ -3,6 +3,7 @@ class AiPromptBuilder {
     required String role,
     required String language,
     required String message,
+    String conversationHistory = '',
   }) {
     String roleInstructions = '';
 
@@ -62,9 +63,16 @@ Help students with:
     return '''
 $roleInstructions
 
-Reply only in: $language
+IMPORTANT:
+- Remember previous conversation context.
+- Use conversation history when answering.
+- Do not ignore previous user messages.
+- Reply only in $language.
 
-User Question:
+Conversation History:
+$conversationHistory
+
+Current User Question:
 $message
 ''';
   }

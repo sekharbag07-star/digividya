@@ -19,10 +19,16 @@ class AiChatManager {
       message: message,
     );
 
+    final conversationHistory = await _chatService.getConversationHistory(
+      userId: userId,
+      limit: 1000,
+    );
+
     final prompt = AiPromptBuilder.build(
       role: userRole,
       language: language,
       message: message,
+      conversationHistory: conversationHistory,
     );
 
     final aiResponse = await _geminiService.generateResponse(
@@ -48,10 +54,16 @@ class AiChatManager {
     required String language,
     required String parentMessageId,
   }) async {
+    final conversationHistory = await _chatService.getConversationHistory(
+      userId: userId,
+      limit: 1000,
+    );
+
     final prompt = AiPromptBuilder.build(
       role: userRole,
       language: language,
       message: originalPrompt,
+      conversationHistory: conversationHistory,
     );
 
     final aiResponse = await _geminiService.generateResponse(

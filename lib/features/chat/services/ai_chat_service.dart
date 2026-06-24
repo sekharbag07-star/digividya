@@ -56,4 +56,28 @@ class AiChatService {
 
     return AiChatMessage.fromFirestore(doc);
   }
+
+  Future<String> getConversationHistory({
+    required String userId,
+    int limit = 1000,
+  }) async {
+    final snapshot = await _messagesRef(
+      userId,
+    ).orderBy('createdAt', descending: true).limit(limit).get();
+
+    final messages = snapshot.docs.reversed;
+
+    final buffer = StringBuffer();
+
+    for (final doc in messages) {
+      final data = doc.data();
+
+      final role = data['role'] ?? 'user';
+      final message = data['message'] ?? '';
+
+      buffer.writeln('$role: $message');
+    }
+
+    return buffer.toString();
+  }
 }
