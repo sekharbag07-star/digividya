@@ -3,12 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:digividya/features/chat/models/ai_chat_message.dart';
 import 'package:digividya/features/chat/services/ai_chat_service.dart';
-import 'package:digividya/features/chat/helpers/ai_prompt_builder.dart';
-import 'package:digividya/core/services/gemini_service.dart';
+import 'package:digividya/features/chat/services/ai_chat_manager.dart';
 
 class AiChatController {
-  final GeminiService _geminiService = GeminiService();
   final AiChatService _chatService = AiChatService();
+
+  final AiChatManager _chatManager = AiChatManager();
 
   String userRole = 'student';
   String userId = '';
@@ -45,63 +45,30 @@ class AiChatController {
   Future<String> sendMessage({
     required String message,
     required String language,
-  }) async {
-    final userMessageId = await _chatService.saveMessage(
+  }) {
+    return _chatManager.sendMessage(
       userId: userId,
-      role: 'user',
+      userRole: userRole,
       message: message,
-    );
-
-    final prompt = AiPromptBuilder.build(
-      role: userRole,
       language: language,
-      message: message,
     );
-
-    final aiResponse = await _geminiService.generateResponse(
-      message: prompt,
-      language: language,
-      role: userRole,
-    );
-
-    await _chatService.saveMessage(
-      userId: userId,
-      role: 'ai',
-      message: aiResponse,
-      parentMessageId: userMessageId,
-    );
-
-    return aiResponse;
   }
 
   Future<String> regenerateResponse({
     required String originalPrompt,
     required String language,
     required String parentMessageId,
-  }) async {
-    final prompt = AiPromptBuilder.build(
-      role: userRole,
-      language: language,
-      message: originalPrompt,
-    );
-
-    final aiResponse = await _geminiService.generateResponse(
-      message: prompt,
-      language: language,
-      role: userRole,
-    );
-
-    await _chatService.saveMessage(
+  }) {
+    return _chatManager.regenerateResponse(
       userId: userId,
-      role: 'ai',
-      message: aiResponse,
+      userRole: userRole,
+      originalPrompt: originalPrompt,
+      language: language,
       parentMessageId: parentMessageId,
     );
-
-    return aiResponse;
   }
 
-  Future<void> clearChat() async {
-    await _chatService.clearChat(userId);
+  Future<void> clearChat() {
+    return _chatManager.clearChat(userId);
   }
 }
