@@ -17,6 +17,8 @@ class AiChatStream extends StatefulWidget {
 class _AiChatStreamState extends State<AiChatStream> {
   final ScrollController _scrollController = ScrollController();
 
+  bool _isRegenerating = false;
+
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_scrollController.hasClients) {
@@ -31,12 +33,57 @@ class _AiChatStreamState extends State<AiChatStream> {
     });
   }
 
-  Future<void> _showComingSoon() async {
-    if (!mounted) return;
+  Future<void> _regenerateMessage(AiChatMessage aiMessage) async {
+    if (_isRegenerating) {
+      return;
+    }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Regenerate response coming soon')),
-    );
+    if (aiMessage.parentMessageId == null) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Original prompt not found')),
+      );
+      return;
+    }
+
+    try {
+      setState(() {
+        _isRegenerating = true;
+      });
+
+      final originalMessage = await widget.controller.getMessageById(
+        aiMessage.parentMessageId!,
+      );
+
+      if (originalMessage == null) {
+        throw Exception('Original message not found');
+      }
+
+      await widget.controller.regenerateResponse(
+        originalPrompt: originalMessage.message,
+        language: 'en',
+        parentMessageId: originalMessage.id,
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Response regenerated')));
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Regenerate failed: $e')));
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isRegenerating = false;
+        });
+      }
+    }
   }
 
   @override
@@ -75,7 +122,9 @@ class _AiChatStreamState extends State<AiChatStream> {
               message: msg.message,
               isUser: msg.role == 'user',
               createdAt: msg.createdAt.toDate(),
-              onRegenerate: msg.role == 'ai' ? _showComingSoon : null,
+              onRegenerate: msg.role == 'ai'
+                  ? () => _regenerateMessage(msg)
+                  : null,
             );
           },
         );
