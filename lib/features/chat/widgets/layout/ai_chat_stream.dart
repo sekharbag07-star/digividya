@@ -19,7 +19,9 @@ class _AiChatStreamState extends State<AiChatStream> {
 
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_scrollController.hasClients) return;
+      if (!_scrollController.hasClients) {
+        return;
+      }
 
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
@@ -72,6 +74,7 @@ class _AiChatStreamState extends State<AiChatStream> {
             return AiMessageBubble(
               message: msg.message,
               isUser: msg.role == 'user',
+              createdAt: msg.createdAt.toDate(),
               onRegenerate: msg.role == 'ai' ? _showComingSoon : null,
             );
           },
