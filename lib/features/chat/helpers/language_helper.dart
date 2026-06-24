@@ -1,17 +1,17 @@
 class LanguageHelper {
   static const Map<String, String> languages = {
     'en': 'English',
-    'hi': 'Hindi',
-    'bn': 'Bengali',
-    'ta': 'Tamil',
-    'te': 'Telugu',
-    'mr': 'Marathi',
-    'gu': 'Gujarati',
-    'kn': 'Kannada',
-    'ml': 'Malayalam',
-    'pa': 'Punjabi',
-    'ur': 'Urdu',
-    'or': 'Odia',
+    'hi': 'हिन्दी',
+    'bn': 'বাংলা',
+    'ta': 'தமிழ்',
+    'te': 'తెలుగు',
+    'mr': 'मराठी',
+    'gu': 'ગુજરાતી',
+    'kn': 'ಕನ್ನಡ',
+    'ml': 'മലയാളം',
+    'pa': 'ਪੰਜਾਬੀ',
+    'ur': 'اردو',
+    'or': 'ଓଡ଼ିଆ',
   };
 
   static String getLanguageName(String code) {
