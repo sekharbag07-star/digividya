@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:digividya/core/services/gemini_service.dart';
 
+import '../controllers/ai_chat_controller.dart';
+import '../widgets/ai_language_selector.dart';
+import '../widgets/ai_loading_widget.dart';
 import '../widgets/ai_message_bubble.dart';
 import '../widgets/ai_welcome_screen.dart';
-import '../widgets/ai_loading_widget.dart';
-import '../widgets/ai_language_selector.dart';
 
 class AiChatScreen extends StatefulWidget {
   const AiChatScreen({super.key});
@@ -14,7 +14,7 @@ class AiChatScreen extends StatefulWidget {
 }
 
 class _AiChatScreenState extends State<AiChatScreen> {
-  final GeminiService _geminiService = GeminiService();
+  final AiChatController _controller = AiChatController();
 
   final TextEditingController messageController = TextEditingController();
 
@@ -23,7 +23,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
   bool isLoading = false;
 
   String selectedLanguage = 'en';
-  String userRole = 'student';
+
   final Map<String, String> languageNames = {
     'en': 'English',
     'hi': 'हिन्दी',
@@ -39,6 +39,12 @@ class _AiChatScreenState extends State<AiChatScreen> {
     'or': 'ଓଡ଼ିଆ',
   };
 
+  @override
+  void initState() {
+    super.initState();
+    _controller.loadUserRole();
+  }
+
   Future<void> sendMessage() async {
     final text = messageController.text.trim();
 
@@ -53,10 +59,9 @@ class _AiChatScreenState extends State<AiChatScreen> {
     messageController.clear();
 
     try {
-      final aiResponse = await _geminiService.generateResponse(
+      final aiResponse = await _controller.sendMessage(
         message: text,
         language: selectedLanguage,
-        role: userRole,
       );
 
       if (!mounted) return;
@@ -143,7 +148,6 @@ class _AiChatScreenState extends State<AiChatScreen> {
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
-
           Expanded(
             child: messages.isEmpty
                 ? const AiWelcomeScreen()
@@ -160,9 +164,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                     },
                   ),
           ),
-
           if (isLoading) const AiLoadingWidget(),
-
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(10),
@@ -178,9 +180,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                       onSubmitted: (_) => sendMessage(),
                     ),
                   ),
-
                   const SizedBox(width: 10),
-
                   IconButton(
                     icon: const Icon(Icons.send),
                     onPressed: isLoading ? null : sendMessage,
