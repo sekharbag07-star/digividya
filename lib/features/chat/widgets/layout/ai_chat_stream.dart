@@ -29,6 +29,14 @@ class _AiChatStreamState extends State<AiChatStream> {
     });
   }
 
+  Future<void> _showComingSoon() async {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Regenerate response coming soon')),
+    );
+  }
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -64,6 +72,7 @@ class _AiChatStreamState extends State<AiChatStream> {
             return AiMessageBubble(
               message: msg.message,
               isUser: msg.role == 'user',
+              onRegenerate: msg.role == 'ai' ? _showComingSoon : null,
             );
           },
         );

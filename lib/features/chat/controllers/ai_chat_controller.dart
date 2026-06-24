@@ -46,7 +46,7 @@ class AiChatController {
     required String message,
     required String language,
   }) async {
-    await _chatService.saveMessage(
+    final userMessageId = await _chatService.saveMessage(
       userId: userId,
       role: 'user',
       message: message,
@@ -68,6 +68,34 @@ class AiChatController {
       userId: userId,
       role: 'ai',
       message: aiResponse,
+      parentMessageId: userMessageId,
+    );
+
+    return aiResponse;
+  }
+
+  Future<String> regenerateResponse({
+    required String originalPrompt,
+    required String language,
+    required String parentMessageId,
+  }) async {
+    final prompt = AiPromptBuilder.build(
+      role: userRole,
+      language: language,
+      message: originalPrompt,
+    );
+
+    final aiResponse = await _geminiService.generateResponse(
+      message: prompt,
+      language: language,
+      role: userRole,
+    );
+
+    await _chatService.saveMessage(
+      userId: userId,
+      role: 'ai',
+      message: aiResponse,
+      parentMessageId: parentMessageId,
     );
 
     return aiResponse;

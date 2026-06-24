@@ -5,10 +5,13 @@ class AiMessageBubble extends StatelessWidget {
   final String message;
   final bool isUser;
 
+  final VoidCallback? onRegenerate;
+
   const AiMessageBubble({
     super.key,
     required this.message,
     required this.isUser,
+    this.onRegenerate,
   });
 
   Future<void> _copyMessage(BuildContext context) async {
@@ -45,13 +48,28 @@ class AiMessageBubble extends StatelessWidget {
 
               const SizedBox(height: 6),
 
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Icon(
-                  Icons.copy_outlined,
-                  size: 14,
-                  color: Colors.grey.shade600,
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.copy_outlined,
+                    size: 14,
+                    color: Colors.grey.shade600,
+                  ),
+
+                  if (!isUser && onRegenerate != null) ...[
+                    const SizedBox(width: 10),
+
+                    GestureDetector(
+                      onTap: onRegenerate,
+                      child: Icon(
+                        Icons.refresh,
+                        size: 14,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ],
           ),

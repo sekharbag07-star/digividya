@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../models/ai_chat_message.dart';
+import 'package:digividya/features/chat/models/ai_chat_message.dart';
 
 class AiChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -9,14 +9,20 @@ class AiChatService {
     return _firestore.collection('ai_chats').doc(userId).collection('messages');
   }
 
-  Future<void> saveMessage({
+  Future<String> saveMessage({
     required String userId,
     required String role,
     required String message,
+    String? parentMessageId,
   }) async {
-    await _messagesRef(
-      userId,
-    ).add({'role': role, 'message': message, 'createdAt': Timestamp.now()});
+    final doc = await _messagesRef(userId).add({
+      'role': role,
+      'message': message,
+      'createdAt': Timestamp.now(),
+      'parentMessageId': parentMessageId,
+    });
+
+    return doc.id;
   }
 
   Stream<List<AiChatMessage>> getMessages(String userId) {
@@ -36,5 +42,18 @@ class AiChatService {
     for (final doc in snapshot.docs) {
       await doc.reference.delete();
     }
+  }
+
+  Future<AiChatMessage?> getMessageById({
+    required String userId,
+    required String messageId,
+  }) async {
+    final doc = await _messagesRef(userId).doc(messageId).get();
+
+    if (!doc.exists) {
+      return null;
+    }
+
+    return AiChatMessage.fromFirestore(doc);
   }
 }

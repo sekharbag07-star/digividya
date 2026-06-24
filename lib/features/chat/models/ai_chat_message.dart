@@ -6,11 +6,16 @@ class AiChatMessage {
   final String message;
   final Timestamp createdAt;
 
+  // Future features:
+  // regenerate, analytics, message linking
+  final String? parentMessageId;
+
   const AiChatMessage({
     required this.id,
     required this.role,
     required this.message,
     required this.createdAt,
+    this.parentMessageId,
   });
 
   factory AiChatMessage.fromFirestore(DocumentSnapshot doc) {
@@ -21,11 +26,17 @@ class AiChatMessage {
       role: data['role'] ?? 'user',
       message: data['message'] ?? '',
       createdAt: data['createdAt'] ?? Timestamp.now(),
+      parentMessageId: data['parentMessageId'],
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {'role': role, 'message': message, 'createdAt': createdAt};
+    return {
+      'role': role,
+      'message': message,
+      'createdAt': createdAt,
+      'parentMessageId': parentMessageId,
+    };
   }
 
   AiChatMessage copyWith({
@@ -33,12 +44,14 @@ class AiChatMessage {
     String? role,
     String? message,
     Timestamp? createdAt,
+    String? parentMessageId,
   }) {
     return AiChatMessage(
       id: id ?? this.id,
       role: role ?? this.role,
       message: message ?? this.message,
       createdAt: createdAt ?? this.createdAt,
+      parentMessageId: parentMessageId ?? this.parentMessageId,
     );
   }
 }
