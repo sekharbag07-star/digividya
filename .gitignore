@@ -128,3 +128,15 @@ key.properties
 
 app.*.symbols
 app.*.map.json
+
+# Flutter generated platform files
+
+linux/flutter/generated_plugin_registrant.cc
+linux/flutter/generated_plugins.cmake
+
+windows/flutter/generated_plugin_registrant.cc
+windows/flutter/generated_plugins.cmake
+
+macos/Flutter/GeneratedPluginRegistrant.swift
+
+lib/firebase_options.dart
