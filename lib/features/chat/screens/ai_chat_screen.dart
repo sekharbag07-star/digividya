@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../controllers/ai_chat_controller.dart';
+import 'package:digividya/features/chat/controllers/ai_chat_controller.dart';
 import 'package:digividya/features/chat/widgets/layout/ai_chat_header.dart';
 import 'package:digividya/features/chat/widgets/layout/ai_chat_stream.dart';
 import 'package:digividya/features/chat/widgets/input/ai_chat_input.dart';
@@ -25,7 +25,15 @@ class _AiChatScreenState extends State<AiChatScreen> {
   @override
   void initState() {
     super.initState();
-    _controller.loadUserRole();
+    _initializeChat();
+  }
+
+  Future<void> _initializeChat() async {
+    await _controller.loadUserRole();
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> sendMessage() async {
@@ -56,6 +64,16 @@ class _AiChatScreenState extends State<AiChatScreen> {
     }
   }
 
+  Future<void> clearChat() async {
+    await _controller.clearChat();
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Chat cleared successfully')));
+  }
+
   @override
   void dispose() {
     messageController.dispose();
@@ -64,14 +82,20 @@ class _AiChatScreenState extends State<AiChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_controller.initialized) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       appBar: AiChatHeader(
         selectedLanguage: selectedLanguage,
+        role: _controller.userRole,
         onLanguageChanged: (value) {
           setState(() {
             selectedLanguage = value;
           });
         },
+        onClearChat: clearChat,
       ),
       body: Column(
         children: [

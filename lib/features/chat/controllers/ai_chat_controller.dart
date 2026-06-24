@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../models/ai_chat_message.dart';
-import '../services/ai_chat_service.dart';
-import '../helpers/ai_prompt_builder.dart';
-import '../../../core/services/gemini_service.dart';
+import 'package:digividya/features/chat/models/ai_chat_message.dart';
+import 'package:digividya/features/chat/services/ai_chat_service.dart';
+import 'package:digividya/features/chat/helpers/ai_prompt_builder.dart';
+import 'package:digividya/core/services/gemini_service.dart';
 
 class AiChatController {
   final GeminiService _geminiService = GeminiService();
@@ -12,6 +12,8 @@ class AiChatController {
 
   String userRole = 'student';
   String userId = '';
+
+  bool initialized = false;
 
   Future<void> loadUserRole() async {
     final user = FirebaseAuth.instance.currentUser;
@@ -28,9 +30,15 @@ class AiChatController {
     if (!doc.exists) return;
 
     userRole = doc.data()?['role'] ?? 'student';
+
+    initialized = true;
   }
 
   Stream<List<AiChatMessage>> getMessages() {
+    if (userId.isEmpty) {
+      return const Stream.empty();
+    }
+
     return _chatService.getMessages(userId);
   }
 

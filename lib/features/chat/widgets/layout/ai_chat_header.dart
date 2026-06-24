@@ -5,13 +5,21 @@ import 'package:digividya/features/chat/widgets/common/ai_language_selector.dart
 
 class AiChatHeader extends StatelessWidget implements PreferredSizeWidget {
   final String selectedLanguage;
-  final ValueChanged<String> onLanguageChanged;
+  final String role;
+
+  final Function(String) onLanguageChanged;
+  final VoidCallback? onClearChat;
 
   const AiChatHeader({
     super.key,
     required this.selectedLanguage,
+    required this.role,
     required this.onLanguageChanged,
+    this.onClearChat,
   });
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +32,9 @@ class AiChatHeader extends StatelessWidget implements PreferredSizeWidget {
               'assets/logo/digividya_logo.png',
               height: 30,
               width: 30,
-              errorBuilder: (_, _, _) => const Icon(Icons.school),
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.school, size: 28);
+              },
             ),
           ),
           const SizedBox(width: 10),
@@ -32,20 +42,39 @@ class AiChatHeader extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 4),
-          child: Center(
+        Center(
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.white24,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              role.toUpperCase(),
+              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.only(right: 4),
             child: Text(
               LanguageHelper.getLanguageName(selectedLanguage),
               style: const TextStyle(fontSize: 12),
             ),
           ),
         ),
+
+        IconButton(
+          icon: const Icon(Icons.delete_outline),
+          tooltip: 'Clear Chat',
+          onPressed: onClearChat,
+        ),
+
         AiLanguageSelector(onSelected: onLanguageChanged),
       ],
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
