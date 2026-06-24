@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:digividya/features/chat/models/ai_chat_message.dart';
-import 'package:digividya/features/chat/services/ai_chat_service.dart';
 import 'package:digividya/features/chat/services/ai_chat_manager.dart';
+import 'package:digividya/features/chat/services/ai_chat_service.dart';
 
 class AiChatController {
   final AiChatService _chatService = AiChatService();
@@ -27,7 +27,10 @@ class AiChatController {
         .doc(user.uid)
         .get();
 
-    if (!doc.exists) return;
+    if (!doc.exists) {
+      initialized = true;
+      return;
+    }
 
     userRole = doc.data()?['role'] ?? 'student';
 
@@ -66,6 +69,10 @@ class AiChatController {
       language: language,
       parentMessageId: parentMessageId,
     );
+  }
+
+  Future<AiChatMessage?> getMessageById(String messageId) {
+    return _chatService.getMessageById(userId: userId, messageId: messageId);
   }
 
   Future<void> clearChat() {
