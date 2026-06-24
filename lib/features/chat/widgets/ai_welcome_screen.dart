@@ -18,12 +18,16 @@ class AiWelcomeScreen extends StatelessWidget {
                 return const Icon(Icons.school, size: 80);
               },
             ),
+
             const SizedBox(height: 20),
+
             const Text(
               'Welcome to DigiVidya AI',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
+
             const SizedBox(height: 10),
+
             const Text(
               'Homework Help\n'
               'Exam Preparation\n'

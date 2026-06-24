@@ -1,0 +1,71 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../models/ai_chat_message.dart';
+import '../services/ai_chat_service.dart';
+import '../helpers/ai_prompt_builder.dart';
+import '../../../core/services/gemini_service.dart';
+
+class AiChatController {
+  final GeminiService _geminiService = GeminiService();
+  final AiChatService _chatService = AiChatService();
+
+  String userRole = 'student';
+  String userId = '';
+
+  Future<void> loadUserRole() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) return;
+
+    userId = user.uid;
+
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    if (!doc.exists) return;
+
+    userRole = doc.data()?['role'] ?? 'student';
+  }
+
+  Stream<List<AiChatMessage>> getMessages() {
+    return _chatService.getMessages(userId);
+  }
+
+  Future<String> sendMessage({
+    required String message,
+    required String language,
+  }) async {
+    await _chatService.saveMessage(
+      userId: userId,
+      role: 'user',
+      message: message,
+    );
+
+    final prompt = AiPromptBuilder.build(
+      role: userRole,
+      language: language,
+      message: message,
+    );
+
+    final aiResponse = await _geminiService.generateResponse(
+      message: prompt,
+      language: language,
+      role: userRole,
+    );
+
+    await _chatService.saveMessage(
+      userId: userId,
+      role: 'ai',
+      message: aiResponse,
+    );
+
+    return aiResponse;
+  }
+
+  Future<void> clearChat() async {
+    await _chatService.clearChat(userId);
+  }
+}

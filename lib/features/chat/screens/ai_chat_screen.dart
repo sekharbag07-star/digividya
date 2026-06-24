@@ -23,7 +23,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
   bool isLoading = false;
 
   String selectedLanguage = 'en';
-
+  String userRole = 'student';
   final Map<String, String> languageNames = {
     'en': 'English',
     'hi': 'हिन्दी',
@@ -56,6 +56,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
       final aiResponse = await _geminiService.generateResponse(
         message: text,
         language: selectedLanguage,
+        role: userRole,
       );
 
       if (!mounted) return;
